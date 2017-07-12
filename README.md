@@ -17,4 +17,9 @@ improving the build process, and so on.
 - The process of actually building a console application.
   - Different build types (Debug, Release, Release with Debug symbols)
 
-*** Memory and Pointers
+### Memory and Pointers
+
+- Pointer definition
+- Stack vs Heap allocations
+- Finding memory leaks
+- Layout of classes in memory
