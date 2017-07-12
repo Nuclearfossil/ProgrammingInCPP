@@ -14,8 +14,13 @@ improving the build process, and so on.
 
 - Setting up the your build environment.
 - Simple language tutorial.
+  - Language Basics
+  - Gotchas
 - The process of actually building a console application.
   - Different build types (Debug, Release, Release with Debug symbols)
+- Some Libraries
+  - STL and STL-like libraries
+  - Header only vs. Static Libs vs. DLLs
 
 ### Memory and Pointers
 
@@ -23,3 +28,13 @@ improving the build process, and so on.
 - Stack vs Heap allocations
 - Finding memory leaks
 - Layout of classes in memory
+
+### Intermediate C++
+
+- Threading
+- Serialization
+- RTTI/Exceptions
+- Templates
+- Lambdas
+- New data types (auto)
+- More stuff as I find it.
