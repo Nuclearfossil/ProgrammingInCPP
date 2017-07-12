@@ -1,19 +1,20 @@
-* Programming In C++
+# Programming In C++
 
 An introductory tutorial/review of the C++ programming language
 
-** Goals
+## Goals
 
 We understand that there is an existing level of programming expertise by the reader. You are familiar with other languages like C#, Rust, Java and Python.
 This tutorial series attempts to broach the topic of "How do I write code in C++" as well as touch on other aspects of the development cycle like debugging,
 improving the build process, and so on.
 
-** Sylabus
+## Sylabus
 
-*** Review
+### Review
+
 - Setting up the your build environment.
 - Simple language tutorial.
 - The process of actually building a console application.
- - Different build types (Debug, Release, Release with Debug symbols)
+  - Different build types (Debug, Release, Release with Debug symbols)
 
 *** Memory and Pointers
