@@ -49,3 +49,102 @@ Visually, it kind of looks like this process:
 The next question is, how does the compiler know how to find the actual source code for the function `printf`? Trust me (or go look yourself), it's not declared in `stdio.h`. We know that the linker will eventually resolve it into a library, but how do we tell the compiler what library to use? We're lucky in Visual Studio, there's a nice dialog for that:
 
 ![Linker Properties](images/LinkerProperties.png)
+
+In other build environments, those compiler options can be passed through on the command line, through a make file, or another build system (I expect XCode does something similar to Visual Studio).
+
+### More details
+
+I'm being purposely obtuse about the format of the files the compiler/linker generates. I feel that's outside of the scope of this tutorial. However, it is something that is worth noting as there are multiple formats depending on the Operating System (ELF, COFF, PE32+ for example). I'll point you here to start the investigation if you're truly interested: [wikipedia](https://en.wikipedia.org/wiki/Object_file)
+
+## Examining an incredibly simple program
+
+In the source code for this tutorial, I have a very simple example program that consists of multiple files.
+
+- `main.cpp` = This is the main entry point into our application
+- `functions.h` = This is the definitions of functions we are exposing
+- `functions.cpp = this is the declaration of the functions we are using.
+
+There's a bit there, so let's walk through this:
+
+We have the main entry point in `main.cpp` via the `int main()` function declaration. In this we call a few external functions. Most notably, we call our own function, `Fibbonaci` to calculate a Fibbonaci series recursively. The other functions are part of the standard library (not the STL).
+
+``` C++
+// ProgrammingInCPP.cpp : Defines the entry point for the console application.
+//
+
+#include <stdio.h>
+#include "Functions.h"
+
+int main()
+{
+    for (unsigned int index = 0; index < 10; index++)
+    {
+        printf("The Fibbonaci series of %d is %d\n", index, Fibbonaci(index));
+    }
+
+    printf("press any key to continue");
+    scanf("-");
+    return 0;
+}
+```
+
+Also note that we include the `Functions.h` header file. To be 100% explicit, this has the *exact* same functionality of injecting the contents of the file into `main.cpp` like so:
+
+``` C++
+// ProgrammingInCPP.cpp : Defines the entry point for the console application.
+//
+
+#include <stdio.h>
+#pragma once
+
+unsigned int Fibbonaci(unsigned int i);
+
+int main()
+{
+    for (unsigned int index = 0; index < 10; index++)
+    {
+        printf("The Fibbonaci series of %d is %d\n", index, Fibbonaci(index));
+    }
+
+    printf("press any key to continue");
+    scanf("-");
+    return 0;
+}
+```
+
+To repeat, you could physically copy the contents of the file `Functions.h` and replace `#include "Functions.h"` with those contents. Go ahead. Try it. See what you get.  And then revert it ;)
+
+What, then, is the purpose of the `Functions.h` header file? This is where we declare the signature of a function, class, template, etc that can be referenced elsewhere. To stress this - we are defining the signature of the function `Fibbonacci` in this case. We do not actually define the implementation of that function.
+
+Finally, we have the file `Functions.cpp`. This is where we define the implementation. Also note that I do not have any headers in this file:
+
+```C++
+unsigned int Fibbonaci(unsigned int i)
+{
+    if (i <= 1)
+        return i;
+
+    return Fibbonaci(i - 1) + Fibbonaci(i - 2);
+}
+```
+
+In this case, I don't need to include any headers as I am not referencing any external functions. Also note that the C++ compiler cannot 'look ahead' to infer functions/classes that are defined later in the file. If you need to reference a function/class, you are going to need to declare it before it's used.  This is why you'll see a header file for a `.cpp` file included - it does the 'forward declarations` of those functions/classes for you.
+
+OK, what else do we have in this `Fibbonacci` function implementation? 
+
+- we have simple return types defined
+- we have an example of a simple argument passed into the function
+- we have a conditional in the form of an `if` statement
+- we have an example of recursion, where the function calls itself.
+
+I don't think I need to review how recursion works. If I'm wrong, please let me know.
+
+## To Summarize
+
+This is a pretty quick tutorial. I've covered some fairly straightforward concepts here. In the next example, we'll actually discuss the language basics.
+
+## What we haven't reviewed
+
+I'm leaving it to the reader to understand how to compile the project. This is a Visual Studio 2015 solution/project. Visual Studio 2015 Community Edition was used in the development of this example project.
+
+Enjoy for now.
