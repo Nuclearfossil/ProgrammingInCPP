@@ -1,4 +1,4 @@
-# C++ Review - Part 1
+# C++ Review
 
 ## Overview
 
@@ -14,6 +14,8 @@ so I figured this would also be a great opportunity to dig into new features as 
 I've already set up a syllabus in the parent README.md file, but to re-iterate:
 
 - Setting up the your build environment.
+  - [Part 1](Review01\README.md)
+  - [Part 2](Review02\README.md)
 - Simple language tutorial.
   - Language Basics
   - Gotchas
