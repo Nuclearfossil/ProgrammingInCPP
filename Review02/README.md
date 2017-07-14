@@ -32,15 +32,27 @@ Thread model: posix
 InstalledDir: C:\Program Files\LLVM\bin
 ```
 
+At this point, you should be good. If not, check out the faq's for each.
+
 For clarity, we'll call this window/toolset the `clang` compiler.
 
-What is `clang`? Wiki defines it as
+### What is `clang`? 
+
+Wiki defines it as
 
 > a compiler front end for the programming languages C, C++, Objective-C, Objective-C++, OpenMP,[5] OpenCL, and CUDA. It uses LLVM as its back end and has been part of the LLVM release cycle since LLVM 2.6.
 >
 > It is designed to be able to replace the full GNU Compiler Collection (GCC). Its contributors include Apple, Microsoft, Google, ARM, Sony, Intel and Advanced Micro Devices (AMD). It is open-source software,[6] with source code released under the University of Illinois/NCSA License, a permissive free software licence.
 
-At this point, you should be good. If not, check out the faq's for each.
+From this, we see the phrase `LLVM`. What is that? Again, Wiki to the rescue [here](https://en.wikipedia.org/wiki/LLVM)
+
+>The LLVM compiler infrastructure project (formerly Low Level Virtual Machine) is a "collection of modular and reusable compiler and toolchain technologies"[3] used to develop compiler front ends and back ends.
+>
+>LLVM is written in C++ and is designed for compile-time, link-time, run-time, and "idle-time" optimization of programs written in arbitrary programming languages. Originally implemented for C and C++, the language-agnostic design of LLVM has since spawned a wide variety of front ends: languages with compilers that use LLVM include ActionScript, Ada, C#, Common Lisp, Crystal, D, Delphi, Fortran, OpenGL Shading Language, Halide, Haskell, Java bytecode, Julia, Lua, Objective-C, Pony, Python, R, Ruby, Rust, CUDA, Scala,[9] Swift, and Xojo.
+>
+>The name LLVM was originally an initialism for Low Level Virtual Machine, but this became increasingly less apt as LLVM became an "umbrella project" that included a variety of other compiler and low-level tool technologies, so the project abandoned the initialism.[13] Now, LLVM is a brand that applies to the LLVM umbrella project, the LLVM intermediate representation (IR), the LLVM debugger, the LLVM C++ Standard Library (with full support of C++11 and C++14), etc. LLVM is administered by the LLVM Foundation. Its president is compiler engineer Tanya Lattner.
+
+I don't know if I can describe it better. So I won't try!
 
 ## Compiling your program, redux
 
