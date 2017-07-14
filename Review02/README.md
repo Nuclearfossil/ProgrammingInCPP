@@ -8,7 +8,7 @@ Additionally, I'll be looking at using clang as an alternative, so you can see h
 
 ## Checking your configuration.
 
-You should fire off the 'VS2015 x86 Native Tools Command Prompt` from your start menu for this. You'll know it's working if you can do this:
+You should fire off the 'VS2015 x86 Native Tools Command Prompt' from your start menu for this. You'll know it's working if you can do this:
 
 ``` prompt
 D:\ProgrammingInCPP\Review02>cl
@@ -33,6 +33,12 @@ InstalledDir: C:\Program Files\LLVM\bin
 ```
 
 For clarity, we'll call this window/toolset the `clang` compiler.
+
+What is `clang`? Wiki defines it as
+
+> a compiler front end for the programming languages C, C++, Objective-C, Objective-C++, OpenMP,[5] OpenCL, and CUDA. It uses LLVM as its back end and has been part of the LLVM release cycle since LLVM 2.6.
+>
+> It is designed to be able to replace the full GNU Compiler Collection (GCC). Its contributors include Apple, Microsoft, Google, ARM, Sony, Intel and Advanced Micro Devices (AMD). It is open-source software,[6] with source code released under the University of Illinois/NCSA License, a permissive free software licence.
 
 At this point, you should be good. If not, check out the faq's for each.
 
