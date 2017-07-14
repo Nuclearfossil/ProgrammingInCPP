@@ -9,7 +9,7 @@ last couple of years away from C++, so this could be considered my own refresher
 Additionally, I'm going to look into new language constructs/developments. I've been primarily a C++ 98 coder for the last decade,
 so I figured this would also be a great opportunity to dig into new features as well.
 
-## What the Review will cover
+### What the Review folder will cover
 
 I've already set up a syllabus in the parent README.md file, but to re-iterate:
 
@@ -23,10 +23,9 @@ I've already set up a syllabus in the parent README.md file, but to re-iterate:
   - STL and STL-like libraries
   - Header only vs. Static Libs vs. DLLs
 
-## Structure of this project
+### Overall structure of the Review folder
 
-In this directory you will find a `Docs` folder. In it you will find all the relevant documentation that goes along with source code.
-I will also attempt to document the codebase as completely as possible.
+Each review section (the `ReviewXX` folder) will consist of a specific topic. I'll try and keep the subject matter short and to the point. Each of these folder will contain a single `README.md` file, an `Images` folder (for images) and possibly additional markdown files, liked to the `README.md`.
 
 For the review section, I am looking for clarity rather than optimization/neat code hacks. We'll talk about that in other discussions.
 
