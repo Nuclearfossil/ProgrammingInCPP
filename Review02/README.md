@@ -52,7 +52,7 @@ From this, we see the phrase `LLVM`. What is that? Again, Wiki to the rescue [he
 >
 >The name LLVM was originally an initialism for Low Level Virtual Machine, but this became increasingly less apt as LLVM became an "umbrella project" that included a variety of other compiler and low-level tool technologies, so the project abandoned the initialism.[13] Now, LLVM is a brand that applies to the LLVM umbrella project, the LLVM intermediate representation (IR), the LLVM debugger, the LLVM C++ Standard Library (with full support of C++11 and C++14), etc. LLVM is administered by the LLVM Foundation. Its president is compiler engineer Tanya Lattner.
 
-I don't know if I can describe it better. So I won't try!
+I don't know if I can describe it better. So I won't try! If you're looking for more infor on `clang` and `LLVM`, go to the source [here](https://clang.llvm.org) and [here](http://llvm.org)
 
 ## Compiling your program, redux
 
