@@ -185,6 +185,10 @@ void DrawFrame(int width, int height)
 }
 ```
 
+And, as an output, we get the following:
+
+![animated](Images\Review03.gif)
+
 ### C++ Comments
 
 Not going to say a lot about comments. There are two types:
@@ -336,6 +340,43 @@ a 'pointer literal'. When we dig into pointers later, we'll go over it more, but
 that `nullptr` is much more useful to us that `null` was. So if your compiler supports it,
 use it.
 
+What kinds of variables do we have availble to us in C/C++? There actually aren't that many:
+
+| Type Name | Description |
+| --------- | ----------- |
+| char      | A single byte worth of information. This usually maps to the ASCII code table. But not necessarily. |
+| int       | An integer. This can have modifers added to it like `unsigned`, `short` and `long`. |
+| float     | An IEEE floating point number. A great breakdown of it is [here](http://steve.hollasch.net/cgindex/coding/ieeefloat.html). |
+| double    | See the above for a breakdown of a double. |
+| bool      | True or False, 1 or 0, on or off - it's a boolean! |
+| void      | Represents nothing. Used to define no return value in a function, but also has other (pointer) meanings. |
+
+We can enhance the base types even further using additional keywords:
+
+| Classification   | Type names                 | Width (bits) | Notes                                                                                                    |
+| ---------------- | -------------------------- | :----------: | -------------------------------------------------------------------------------------------------------- |
+| Character types  | `char`                     | 8            |                                                                                                          |
+|                  | `char16_t`                 | 16           | At least as big as a `char`.                                                                             |
+|                  | `char32_t`                 | 32           | At least as big as a `char16_t`                                                                          |
+|                  | `wchar_t`                  | 8/16/32      | Wide character - supports the largest character set based on compiler.                                   |
+| Signed Integer   | `short int`                | 16           | Optimized for space to have at *least* 16 bits.                                                          |
+|                  | `int`                      | 16/32        | First number is the C++ standard definition. Additional number is the max based on specialized compiler. |
+|                  | `long int`                 | 32/64        | First number is the C++ standard definition. Additional number is the max based on specialized compiler. |
+|                  | `long long int`            | 64           |                                                                                                          |
+| Unsigned Integer | `unsigned` `short int`     | 16           | Optimized for space to have at *least* 16 bits.                                                          |
+|                  | `unsigned` `int`           | 16/32        | First number is the C++ standard definition. Additional number is the max based on specialized compiler. |
+|                  | `unsigned` `long int`      | 32/64        | First number is the C++ standard definition. Additional number is the max based on specialized compiler. |
+|                  | `unsigned` `long long int` | 64           |                                                                                                          |
+| Floating point   | `float`                    | 32           | [reference](http://en.cppreference.com/w/cpp/language/types)                                             |
+|                  | `double`                   | 64           | [reference](http://en.cppreference.com/w/cpp/language/types)                                             |
+|                  | `long double`              | 80           | [reference](http://en.cppreference.com/w/cpp/language/types)                                             |
+| Boolean          | `bool`                     | 8            | No, it is not 1 bit. Each bool takes up 8 bits. This is why bitmasks/bitflags are useful.                |
+| Miscelleaneous   | `void`                     | 0            | No data storage for a `void`.
+|                  | `nullptr`                  | *            | nullptr is the same size as a pointer. This can vary. |
+
+We are not limited to just these data types. We can create our own 'types' via structures and classes. However, they must be composed, at a bare minimum, of these types.
+I'll leave it to the reader to understand the min/max values that can be stored in each numerical data type.
+
 ### Loops and Conditionals
 
 Just like every language out there, C/C++ has loops and conditionals.
@@ -377,6 +418,16 @@ do
 {
     index++;
 } while (index < 10)
+
+// More advanced looping structures that we'll cover later
+// but show here for a level of completeness, as this was 
+// introduced in C++ 11 and has a series of additional features.
+// This, however, is the simplest case.
+int localVector[] = {5, 10, 20, 100, 1024, 5150};
+for (int value : localVector)
+{
+    printf("%d ", value);
+}
 ```
 
 C++ also has conditional statements:
