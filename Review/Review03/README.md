@@ -187,7 +187,7 @@ void DrawFrame(int width, int height)
 
 And, as an output, we get the following:
 
-![animated](Images\Review03.gif)
+![animated](Images/Review03.gif)
 
 ### C++ Comments
 
