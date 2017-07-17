@@ -228,6 +228,8 @@ C++. It just links it like it's C. Test this theory if you'd like by removing th
 
 Or, crack open the following link: [Compiler Explorer](https://godbolt.org/g/kC79EA) to see the warnings.
 
+Anyway, this was a bit off-topic. We'll look at `extern` after a bit, when looking at linking in C libraries.
+
 When we run this bit of code, we get the following result:
 
 ![example01](Images/example01.png)
@@ -401,4 +403,171 @@ struct VisibleVertex01
 What's going on? Is the `sizeof` funtion not working?
 
 I mean, that's not a lot of wasted space for an individual element, but it adds up quickly. Thus
-we really can't ignore it.
+we really can't ignore it. In the last version of the `VisibleVertex01` struct, we see that we've
+wasted 8 bytes per `VisibleVertex01`. If we were to have a mesh with 65,000 unique instances of that
+type, that's 520,000 bytes.
+
+So, how can we fix that? Well, we can use the preprocessor like so:
+
+``` C++
+#pragma pack(push)
+#pragma pack(1)
+struct VisibleVertex02
+{
+    bool    visible;    // 1 byte
+    Point2D position;   // 8 bytes
+    RGB     color;      // 12 bytes
+    UV      texCoord;   // 8 bytes
+};                      // 29 bytes total
+#pragma pack(pop)
+
+// a little further down ...
+
+    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "Size of VisibleVertex02: %02d bytes", sizeof(VisibleVertex02));
+    textPos.y += 15;
+```
+
+And now run the program, you get the following:
+
+![image](Images/struct_sizes_success.png)
+
+That's great, but that still doesn't answer *why*.
+
+Let's start with something simpler:
+
+``` C++
+// Example program
+#include <stdio.h>
+
+struct TestA
+{
+    char a; // 1 byte
+    int  b; // 4 bytes
+};
+
+int main()
+{
+    printf("Size of a char:  %02lu byte(s)\n", sizeof(char));
+    printf("Size of a int:   %02lu byte(s)\n", sizeof(int));
+    printf("Size of a TestA: %02lu byte(s)\n", sizeof(TestA));
+ 
+}
+```
+
+Which results in:
+
+``` prompt
+Size of a char:  01 byte(s)
+Size of a int:   04 byte(s)
+Size of a TestA: 08 byte(s)
+```
+
+That _should_ have been 5 bytes, no matter how you slice it. So, how does this work?
+What's happening here is that *something* in that structure is adding padding. _Why_ is it doing
+that and _where_ is it doing it are the questions we need to answer.
+
+Fundamentally, when dealing with memory, CPUs access memory in _word_ sized chunks. I purposely didn't
+explicitly say how big a word is, because that actually varies on architecture. For our purposes, this
+will be either 4 byte or 8 byte alignment (4 for 32 bit systems, 8 for 64 bit systems).
+
+For now, let's assume a 4 byte alignment (makes the math easier to work with). In the `TestA` struct we
+have the first field `a` starting at byte 0. This is A-OK (0 is always a good starting point). And it is a byte
+long. So we can assume that the next field `b` starts on the second byte, right?
+
+Nope!
+
+Remember, the CPU is reading in the value from the _word_ aligned boundary. In this case, 4 bytes. So there
+is padding added into the struct between fields `a` and `b` of 3 bytes. In essence, the structure looks like this:
+
+``` C++
+struct TestA
+{
+    char a; // 1 byte
+    char pad[3];
+    int  b; // 4 bytes
+};
+```
+
+Don't believe me? Let's write some code!
+
+``` C++
+// Example program
+#include <stdio.h>
+#include <memory.h>
+
+struct TestA
+{
+    char a; // 1 byte
+    int  b; // 4 bytes
+};
+
+struct TestB
+{
+    char a;      // 1 byte
+    char pad[3]; // 3 bytes
+    int  b;      // 4 bytes
+};
+
+int main()
+{
+    printf("Size of a char:  %02lu byte(s)\n", sizeof(char));
+    printf("Size of a int:   %02lu byte(s)\n", sizeof(int));
+    printf("Size of a TestA: %02lu byte(s)\n", sizeof(TestA));
+    printf("Size of a TestB: %02lu byte(s)\n", sizeof(TestB));
+
+    TestA testA;
+
+    testA.a = 'G';
+    testA.b = 76;
+
+    TestB testB;
+
+    memcpy(&testB, &testA, sizeof(TestA));
+
+    printf("testA.a [%c] testB.a [%c]\n", testA.a, testB.a);
+    printf("testA.b [%d] testB.b [%d]\n", testA.b, testB.b);
+
+    int result = memcmp(&testB, &testA, sizeof(TestA));
+
+    if (result == 0)
+    {
+        printf("The memory blocks are equal!\n");
+    }
+    else
+    {
+        printf("The memory blocks are UNEQUAL!!!\n");
+    }
+}
+```
+
+And the results?
+
+``` prompt
+Size of a char:  01 byte(s)
+Size of a int:   04 byte(s)
+Size of a TestA: 08 byte(s)
+Size of a TestB: 08 byte(s)
+testA.a [G] testB.a [G]
+testA.b [76] testB.b [76]
+The memory blocks are equal!
+```
+
+You can see this in the C++ shell [here](cpp.sh/8756o)
+
+The struct should give you a good idea as to what it looks like, but I like pictures ...
+
+``` prompt
+| word boundary | word boundary |
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |   Bytes
+| a |           | b             |   |   TestA structure
+| a |     pad   | b             |   |   TestB structure
+```
+
+More blurbs go here ...
+
+In C++ shell [link](cpp.sh/6tec)
+
+## Additional references
+ - [The Lost Art of C Structure Packing](http://www.catb.org/esr/structure-packing/): Read this. Seriously.
+ - [Coding for Performance: Data alignment and structures](https://software.intel.com/en-us/articles/coding-for-performance-data-alignment-and-structures): another good read.
+ - [And, of course, Wikipedia](https://en.wikipedia.org/wiki/Data_structure_alignment)
