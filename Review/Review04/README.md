@@ -570,4 +570,7 @@ In C++ shell [link](cpp.sh/6tec)
 ## Additional references
  - [The Lost Art of C Structure Packing](http://www.catb.org/esr/structure-packing/): Read this. Seriously.
  - [Coding for Performance: Data alignment and structures](https://software.intel.com/en-us/articles/coding-for-performance-data-alignment-and-structures): another good read.
+ - [Packed Structures](https://learn.mikroe.com/packed-structures-make-memory-feel-safe/)
+ - [Sven-Hendrik Haase paper on Alignment in C](https://wr.informatik.uni-hamburg.de/_media/teaching/wintersemester_2013_2014/epc-14-haase-svenhendrik-alignmentinc-paper.pdf
+ )
  - [And, of course, Wikipedia](https://en.wikipedia.org/wiki/Data_structure_alignment)
