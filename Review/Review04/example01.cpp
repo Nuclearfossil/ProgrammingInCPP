@@ -25,11 +25,14 @@ struct Point3D
 } gGlobalPoint;
 
 /// The more C friendly version
-typedef struct Point2D
+extern "C"
 {
-    float x;
-    float y;
-} Point2D;
+    typedef struct Point2D
+    {
+        float x;
+        float y;
+    } Point2D;
+}
 
 const float width = 800.0f;
 const float height = 600.0f;
@@ -61,19 +64,46 @@ void Example01()
     point4.x = .25f * width;
     point4.y = .4f * height;
 
-    Vertex textPos;
-    textPos.x = 500.0f;
-    textPos.y = 20.0f;
+    // Initialization of the new variable `textPos`
+    Vertex textPos =
+    {
+        500.0f,  // x field of Vertex
+        20.0f    // y field of Vertex
+    };
 
-    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "Point1 (%f, %f)", point1.x, point1.y);
+    al_draw_textf(gFont, 
+        al_map_rgb(255, 255, 255), 
+        textPos.x, textPos.y, 
+        ALLEGRO_ALIGN_LEFT, 
+        "Point1 (%f, %f)", point1.x, point1.y);
     textPos.y += 15;
-    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "Point2 (%f, %f)", point2.x, point2.y);
+
+    al_draw_textf(gFont, 
+        al_map_rgb(255, 255, 255), 
+        textPos.x, textPos.y, 
+        ALLEGRO_ALIGN_LEFT, 
+        "Point2 (%f, %f)", point2.x, point2.y);
     textPos.y += 15;
-    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "Point3 (%f, %f)", point3.x, point3.y);
+
+    al_draw_textf(gFont, 
+        al_map_rgb(255, 255, 255), 
+        textPos.x, textPos.y, 
+        ALLEGRO_ALIGN_LEFT, 
+        "Point3 (%f, %f)", point3.x, point3.y);
     textPos.y += 15;
-    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "Point4 (%f, %f)", point4.x, point4.y);
+
+    al_draw_textf(gFont, 
+        al_map_rgb(255, 255, 255), 
+        textPos.x, textPos.y, 
+        ALLEGRO_ALIGN_LEFT, 
+        "Point4 (%f, %f)", point4.x, point4.y);
     textPos.y += 15;
-    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "gGlobalPoint (%f, %f)", gGlobalPoint.x, gGlobalPoint.y);
+
+    al_draw_textf(gFont, 
+        al_map_rgb(255, 255, 255), 
+        textPos.x, textPos.y, 
+        ALLEGRO_ALIGN_LEFT, 
+        "gGlobalPoint (%f, %f)", gGlobalPoint.x, gGlobalPoint.y);
     textPos.y += 15;
 
     al_draw_line(point1.x, point1.y, point2.x, point2.y, al_map_rgb(255, 255, 255), 1);

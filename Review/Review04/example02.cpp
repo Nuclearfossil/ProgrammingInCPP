@@ -3,46 +3,46 @@
 
 struct Point2D
 {
-    float x;
-    float y;
-};
+    float x;    // 4 bytes
+    float y;    // 4 bytes
+};              // 8 bytes total
 
 struct RGB
 {
-    float r;
-    float g;
-    float b;
-};
+    float r;    // 4 bytes
+    float g;    // 4 bytes
+    float b;    // 4 bytes
+};              // 12 bytes total
 
 struct RGBA
 {
-    float r;
-    float g;
-    float b;
-    float a;
-};
+    float r;    // 4 bytes
+    float g;    // 4 bytes
+    float b;    // 4 bytes
+    float a;    // 4 bytes
+};              // 16 bytes total
 
 struct UV
 {
-    float u;
-    float v;
-};
+    float u;    // 4 bytes
+    float v;    // 4 bytes
+};              // 8 bytes total
 
 
 struct Vertex
 {
-    Point2D position;
-    RGB     color;
-    UV      texCoord;
-};
+    Point2D position;   // 8 bytes
+    RGB     color;      // 12  bytes
+    UV      texCoord;   // 8 bytes
+};                      // 28 bytes total
 
 struct VisibleVertex01
 {
-    bool    visible;
-    Point2D position;
-    RGB     color;
-    UV      texCoord;
-};
+    bool    visible;    // 1 byte
+    Point2D position;   // 8 bytes
+    RGB     color;      // 12 bytes
+    UV      texCoord;   // 8 bytes
+};                      // 29 bytes total
 
 extern ALLEGRO_FONT* gFont;
 

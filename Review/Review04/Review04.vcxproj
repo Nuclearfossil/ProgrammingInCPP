@@ -166,6 +166,13 @@
     <ClInclude Include="example01.h" />
     <ClInclude Include="example02.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\example01.png" />
+    <Image Include="Images\struct_sizes.png" />
+    <Image Include="Images\struct_sizes_02.png" />
+    <Image Include="Images\struct_sizes_03.png" />
+    <Image Include="Images\struct_sizes_04.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\packages\AllegroDeps.1.5.0.1\build\native\AllegroDeps.targets" Condition="Exists('..\..\packages\AllegroDeps.1.5.0.1\build\native\AllegroDeps.targets')" />
