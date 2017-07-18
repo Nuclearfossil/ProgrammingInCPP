@@ -53,7 +53,7 @@ Change the value of `toRun` to try a different example.  Yes, I could drive this
 and a prompt, but you'll want to evaluate (and change) each of the examples. Changing a single int
 value will, in my option, be the faster way to iterate.
 
-## Our first example (example01.h/cpp)
+## The `struct` keyword and our first example (example01.h/cpp)
 
 Here's a look at the code behind our first example:
 
@@ -228,11 +228,13 @@ C++. It just links it like it's C. Test this theory if you'd like by removing th
 
 Or, crack open the following link: [Compiler Explorer](https://godbolt.org/g/kC79EA) to see the warnings.
 
+Anyway, this was a bit off-topic. We'll look at `extern` after a bit, when looking at linking in C libraries.
+
 When we run this bit of code, we get the following result:
 
 ![example01](Images/example01.png)
 
-## example02.cpp.
+## Counting bytes and a knock to our sanity (example02.h/cpp)
 
 How much space does a struct take up? From our previous review (Review03), we had a table that illustrated
 how big each native data type would be. To help illustrate, let's take the following code:
@@ -401,4 +403,577 @@ struct VisibleVertex01
 What's going on? Is the `sizeof` funtion not working?
 
 I mean, that's not a lot of wasted space for an individual element, but it adds up quickly. Thus
-we really can't ignore it.
+we really can't ignore it. In the last version of the `VisibleVertex01` struct, we see that we've
+wasted 8 bytes per `VisibleVertex01`. If we were to have a mesh with 65,000 unique instances of that
+type, that's 520,000 bytes.
+
+So, how can we fix that? Well, we can use the preprocessor like so:
+
+``` C++
+#pragma pack(push)
+#pragma pack(1)
+struct VisibleVertex02
+{
+    bool    visible;    // 1 byte
+    Point2D position;   // 8 bytes
+    RGB     color;      // 12 bytes
+    UV      texCoord;   // 8 bytes
+};                      // 29 bytes total
+#pragma pack(pop)
+
+// a little further down ...
+
+    al_draw_textf(gFont, al_map_rgb(255, 255, 255), textPos.x, textPos.y, ALLEGRO_ALIGN_LEFT, "Size of VisibleVertex02: %02d bytes", sizeof(VisibleVertex02));
+    textPos.y += 15;
+```
+
+And now run the program, you get the following:
+
+![image](Images/struct_sizes_success.png)
+
+That's great, but that still doesn't answer *why*.
+
+Let's start with something simpler:
+
+``` C++
+// Example program
+#include <stdio.h>
+
+struct TestA
+{
+    char a; // 1 byte
+    int  b; // 4 bytes
+};
+
+int main()
+{
+    printf("Size of a char:  %02lu byte(s)\n", sizeof(char));
+    printf("Size of a int:   %02lu byte(s)\n", sizeof(int));
+    printf("Size of a TestA: %02lu byte(s)\n", sizeof(TestA));
+ 
+}
+```
+
+Which results in:
+
+``` prompt
+Size of a char:  01 byte(s)
+Size of a int:   04 byte(s)
+Size of a TestA: 08 byte(s)
+```
+
+That _should_ have been 5 bytes, no matter how you slice it. So, how does this work?
+What's happening here is that *something* in that structure is adding padding. _Why_ is it doing
+that and _where_ is it doing it are the questions we need to answer.
+
+Fundamentally, when dealing with memory, CPUs access memory in _word_ sized chunks. I purposely didn't
+explicitly say how big a word is, because that actually varies on architecture. For our purposes, this
+will be either 4 byte or 8 byte alignment (4 for 32 bit systems, 8 for 64 bit systems).
+
+For now, let's assume a 4 byte alignment (makes the math easier to work with). In the `TestA` struct we
+have the first field `a` starting at byte 0. This is A-OK (0 is always a good starting point). And it is a byte
+long. So we can assume that the next field `b` starts on the second byte, right?
+
+Nope!
+
+Remember, the CPU is reading in the value from the _word_ aligned boundary. In this case, 4 bytes. So there
+is padding added into the struct between fields `a` and `b` of 3 bytes. In essence, the structure looks like this:
+
+``` C++
+struct TestA
+{
+    char a; // 1 byte
+    char pad[3];
+    int  b; // 4 bytes
+};
+```
+
+Don't believe me? Let's write some code!
+
+``` C++
+// Example program
+#include <stdio.h>
+#include <memory.h>
+
+struct TestA
+{
+    char a; // 1 byte
+    int  b; // 4 bytes
+};
+
+struct TestB
+{
+    char a;      // 1 byte
+    char pad[3]; // 3 bytes
+    int  b;      // 4 bytes
+};
+
+int main()
+{
+    printf("Size of a char:  %02lu byte(s)\n", sizeof(char));
+    printf("Size of a int:   %02lu byte(s)\n", sizeof(int));
+    printf("Size of a TestA: %02lu byte(s)\n", sizeof(TestA));
+    printf("Size of a TestB: %02lu byte(s)\n", sizeof(TestB));
+
+    TestA testA;
+
+    testA.a = 'G';
+    testA.b = 76;
+
+    TestB testB;
+
+    memcpy(&testB, &testA, sizeof(TestA));
+
+    printf("testA.a [%c] testB.a [%c]\n", testA.a, testB.a);
+    printf("testA.b [%d] testB.b [%d]\n", testA.b, testB.b);
+
+    int result = memcmp(&testB, &testA, sizeof(TestA));
+
+    if (result == 0)
+    {
+        printf("The memory blocks are equal!\n");
+    }
+    else
+    {
+        printf("The memory blocks are UNEQUAL!!!\n");
+    }
+}
+```
+
+And the results?
+
+``` prompt
+Size of a char:  01 byte(s)
+Size of a int:   04 byte(s)
+Size of a TestA: 08 byte(s)
+Size of a TestB: 08 byte(s)
+testA.a [G] testB.a [G]
+testA.b [76] testB.b [76]
+The memory blocks are equal!
+```
+
+You can see this in the C++ shell [here](cpp.sh/8756o)
+
+The struct should give you a good idea as to what it looks like, but I like pictures ...
+
+``` prompt
+| word boundary | word boundary |
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |   Bytes
+| a |           | b             |   |   TestA structure
+| a |     pad   | b             |   |   TestB structure
+```
+
+Let's try it with some different sized data types.
+
+``` C++
+// Example program
+#include <stdio.h>
+
+struct TestA
+{
+    char a;     // 1 byte
+    double b;   // 8 bytes
+};              // 9 bytes?
+
+int main()
+{
+    printf("Size of a char:   %02lu bytes\n", sizeof(char));
+    printf("Size of a double: %02lu bytes\n", sizeof(double));
+    printf("Size of a TestA:  %02lu bytes\n", sizeof(TestA));
+}
+```
+
+``` prompt
+Size of a char:   01 bytes
+Size of a double: 08 bytes
+Size of a TestA:  16 bytes
+```
+
+[cppshell link](pp.sh/5byeg)
+
+OK, now it's just messing with us. If we're locking into _word_ sized boundaries, shouldn't that have been 12?
+
+``` C++
+char   a; // 4  bytes
+double b; // 8  bytes
+// total     12 bytes
+```
+
+There's one more piece to the puzzle, and the c-faq has a great blurb on it [here](http://c-faq.com/struct/align.esr.html)
+
+> On modern 32-bit machines like the SPARC or the Intel 86, or any Motorola chip from the 68020 up, each data iten must usually be ``self-aligned'', beginning on an address that is a multiple of its type size. Thus, 32-bit types must begin on a 32-bit boundary, 16-bit types on a 16-bit boundary, 8-bit types may begin anywhere, struct/array/union types have the alignment of their most restrictive member. The first member of each continuous group of bit fields is typically word-aligned, with all following being continuously packed into following words (though ANSI C requires the latter only for bit-field groups of less than word size).
+
+Let's try something to test this theory:
+
+``` C++
+// Example program
+#include <stdio.h>
+
+struct TestA
+{
+    char a;
+    double b;
+    char c;
+};
+
+int main()
+{
+    printf("Size of a char:   %02lu bytes\n", sizeof(char));
+    printf("Size of a double: %02lu bytes\n", sizeof(double));
+    printf("Size of a TestA:  %02lu bytes\n", sizeof(TestA));
+}
+```
+
+and the output?
+
+``` prompt
+Size of a char:   01 bytes
+Size of a double: 08 bytes
+Size of a TestA:  24 bytes
+```
+
+[link](cpp.sh/7y3u)
+
+I think you're starting to see a pattern here. Padding is done, per element, based on the largest
+type alignment requirements.
+
+For completeness, here's the C++ shell version of the `TestA`/`TestB` structs using the `#pragma pack(1)`: [link](cpp.sh/6tec)
+
+I've purposely avoided talking about pointers. I've done this on purpose as this throws a little more complexity into the mix.
+I will be talking about them at a later point, but for now, I'd like to move on to classes.
+
+## Where we add functionality to our types (example03.h/cpp)
+
+Object Oriented programming.
+
+I'm not goint to talk about Object Oriented programming.
+
+I mean, seriously, in 2017, I think there's enough material on the web to cover Inheritance, Encapsulation, Abstraction, interfaces ...
+that's not what I wanted to write this series about. What I want to talk about is the nitty-gritty of the C++ implementation of classes.
+
+If you're looking for an introduction to Object Oriented Programming in C++, I'd recommend you start [here](https://www3.ntu.edu.sg/home/ehchua/programming/cpp/cp3_OOP.html), [here](http://www.learncpp.com/cpp-tutorial/81-welcome-to-object-oriented-programming/) to start.
+As far as printed material, it's been so long since I've taught C++/OOP, I don't think I can recommend anything remotely good. I'm not sure how well Scott Meyers' series of books
+holds up these days, but they were decent reading back in '03. I do remember using "C++ How to Program" as a teaching resource back in the 90s, but I haven't looked at it in
+over a decade [here](https://www.amazon.com/How-Program-7th-Paul-Deitel/dp/0136117260/ref=sr_1_2?s=books&ie=UTF8&qid=1500351972&sr=1-2)
+
+What I do want to talk about is the syntax of Classes. I think that tends to get lost in the shuffle of folks learning C++, so I don't mind burning
+a bit of time as part of the refresher.
+
+But first, let's look at the `struct` keyword again. We know that it allows us to set up a collection of fields to layout
+a structure in memory. But what if we were had the ability to bind Functions as a field?
+
+like so:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+    }
+};
+```
+
+We've essentially merged fields with functions. Could that work? Go ahead and throw that into the C++ shell [here](http://cpp.sh)
+
+It compiles!
+
+So, ... how do we use it? I mean, we have a new struct that has a function, but how do we go about *doing* something with it?
+
+Well, let's create a new variable of type `Vertex` called `point01`:
+
+``` C++
+int main()
+{
+    Vertex point1;
+}
+```
+
+Add that and compile. Aside from some warnings, that works fine.
+
+So, we already know how to access the fields. What's the chances that accessing the functions is as trivial?
+
+Try this:
+
+``` C++
+int main()
+{
+    Vertex point1;
+    
+    point1.Set(10.0f, 20.0f);
+    
+    printf("The value of point1 is (%f, %f)\n", point1.x, point1.y);
+}
+```
+
+Run it in the C++ shell and ...
+
+``` prompt
+The value of point1 is (10.000000, 20.000000) 
+```
+
+That's pretty much it. The `struct` keyword is all you need to create objects with data and functions!  We're done!
+There's nothing left to learn about C++!
+
+That's total nonsense, I know. There's so much more to cover.
+
+The thing with the `struct` keyword is that everything we've done so far is of `public` scope. That's the default
+scope for anything defined in a struct. That's mostly for backwards compatability, as the original definition of 
+the struct keyword in C didn't have a concept of 'data/functional hiding'.
+
+So, scoping in structs. Like I said before, the default scope for a `struct` is `public`. There's also
+`private` and `protected`.
+
+Both the `private` and `protected` keywords hide elements of your structure. So if you were to do the following:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+    }
+    
+    private:
+    double mX;
+    
+    protected:
+    char buffer[3];
+};
+```
+
+You would not be able to access either `mX` or `buffer` in the main function:
+
+``` C++
+int main()
+{
+    Vertex point1;
+    
+    point1.Set(10.0f, 20.0f);
+    point1.mX = 5.0;
+    
+    printf("The value of point1 is (%f, %f)\n", point1.x, point1.y);
+}
+```
+
+When compiling produces:
+
+``` prompt
+ In function 'int main()':
+16:12: error: 'double Vertex::mX' is private
+28:12: error: within this context
+```
+
+Check it out [here](cpp.sh/46wuk)
+
+However, we can access it from inside the `Vertex` class:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+        mX = inX - inY;
+    }
+    
+    private:
+    double mX;
+    
+    protected:
+    char buffer[3];
+};
+```
+
+Code [here](cpp.sh/3o5ty)
+
+What we've seen so far is that we're hiding `private` and `protected` behind the `struct` barrier.
+We can also use derivation of structs to build object hierarcies:
+
+Creating a new struct called `ColorVertex` like so:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+        mX = inX - inY;
+    }
+    
+    private:
+    double mX;
+    
+    protected:
+    char buffer[3];
+};
+
+struct ColorVertex : Vertex
+{
+    int r;
+    int g;
+    int b;
+};
+```
+
+Allows `ColorVertex` to access all `public` and `protected` members of `Vertex`, but it hides 
+everything that's `private`. Go ahead, try and access `mX` and the `buffer` members of `Vertex`
+through `ColorVertex`. Sandbox is [here](cpp.sh/6nmzf)
+
+OK, so that's a very quick run-though of the `struct` usage as an object.
+
+But we never use it.
+
+NEVER.
+
+OK, that's a lie. We tend to use `structs` when talking about POD (Plain Old Data) types. But
+when you want to define Classes, that's when you use the `class` keyword.
+
+What's the difference between `struct` and `class`? One thing, and one thing only - the default
+access level. For the `struct` keyword, the default access level is `public`. For `class` it's
+`private`.
+
+ - For completeness, POD (Plain Old Data) means nothing more than a struct that contains nothing but data. It can be compelex data, but it contains no 'logic'.
+
+To convert the example over to classes?
+
+``` C++
+// Example program
+#include <stdio.h>
+
+class Vertex
+{
+    public:
+        float x;
+        float y;
+    
+        void Set(float inX, float inY)
+        {
+            x = inX;
+            y = inY;
+            mX = inX - inY;
+        }
+    
+    private:
+        double mX;
+    
+    protected:
+        char buffer[3];
+};
+
+class ColorVertex : public Vertex
+{
+    int r;
+    int g;
+    int b;
+};
+
+int main()
+{
+    ColorVertex point1;
+    
+    point1.Set(10.0f, 20.0f);
+    
+    printf("The value of point1 is (%f, %f)\n", point1.x, point1.y);
+}
+```
+
+A couple of things to note:
+
+ 1. When deriving from `Vertex`, we need to qualify it as `public`. eg `class ColorVertex : public Vertex`
+ 2. If you do not do that, and define it as `class ColorVertex : Vertex` the scope of `Vertex` defaults to `private`
+ 
+So what do you get from doing all that? The current set of code fails to compile due to data and functions being
+inaccessible? It's not trivial to describe the implementation details of `private` inheritance. Think of it like this:
+
+When you privately derive from a base class, all `public` members become `private`. You still have access to all `protected`
+members, but that's it.
+
+So, as an example:
+
+``` C++
+// Example program
+#include <stdio.h>
+
+class Vertex
+{
+    public:
+        float x;
+        float y;
+    
+        void Set(float inX, float inY)
+        {
+            x = inX;
+            y = inY;
+            mX = inX - inY;
+        }
+    
+    private:
+        double mX;
+    
+    protected:
+        void ProtectedSet(float inX, float inY)
+        {
+            x = inX + 5;
+            y = inY + 5;
+        }
+        char buffer[3];
+};
+
+class ColorVertex : protected Vertex
+{
+    public:
+    int r;
+    int g;
+    int b;
+    
+    void ExposedSet(float inX, float inY)
+    {
+        ProtectedSet(inX, inY);
+    }
+    
+    float GetX() { return x; }
+    float GetY() { return y; }
+};
+
+int main()
+{
+    ColorVertex point1;
+    
+    point1.ExposedSet(10.0f, 20.0f);
+    
+    printf("The value of point1 is (%f, %f)\n", point1.GetX(), point1.GetY());
+}
+
+```
+
+link [here](cpp.sh/8oubb)
+
+That is an incredibly convoluted example. I'll see if I can come up with a better one, but
+in all honesty, you tend *not* to use this pattern. I think in all my years of coding, I've
+run across it a handfull of times.
+
+## Additional references
+ - [The Lost Art of C Structure Packing](http://www.catb.org/esr/structure-packing/): Read this. Seriously.
+ - [Coding for Performance: Data alignment and structures](https://software.intel.com/en-us/articles/coding-for-performance-data-alignment-and-structures): another good read.
+ - [Packed Structures](https://learn.mikroe.com/packed-structures-make-memory-feel-safe/)
+ - [Sven-Hendrik Haase paper on Alignment in C](https://wr.informatik.uni-hamburg.de/_media/teaching/wintersemester_2013_2014/epc-14-haase-svenhendrik-alignmentinc-paper.pdf
+ )
+ - [C-Faq blurb](http://c-faq.com/struct/align.html)
+ - [And, of course, Wikipedia](https://en.wikipedia.org/wiki/Data_structure_alignment)
