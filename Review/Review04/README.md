@@ -53,7 +53,7 @@ Change the value of `toRun` to try a different example.  Yes, I could drive this
 and a prompt, but you'll want to evaluate (and change) each of the examples. Changing a single int
 value will, in my option, be the faster way to iterate.
 
-## Our first example (example01.h/cpp)
+## The `struct` keyword and our first example (example01.h/cpp)
 
 Here's a look at the code behind our first example:
 
@@ -234,7 +234,7 @@ When we run this bit of code, we get the following result:
 
 ![example01](Images/example01.png)
 
-## example02.cpp.
+## Counting bytes and a knock to our sanity (example02.h/cpp)
 
 How much space does a struct take up? From our previous review (Review03), we had a table that illustrated
 how big each native data type would be. To help illustrate, let's take the following code:
@@ -563,9 +563,411 @@ The struct should give you a good idea as to what it looks like, but I like pict
 | a |     pad   | b             |   |   TestB structure
 ```
 
-More blurbs go here ...
+Let's try it with some different sized data types.
 
-In C++ shell [link](cpp.sh/6tec)
+``` C++
+// Example program
+#include <stdio.h>
+
+struct TestA
+{
+    char a;     // 1 byte
+    double b;   // 8 bytes
+};              // 9 bytes?
+
+int main()
+{
+    printf("Size of a char:   %02lu bytes\n", sizeof(char));
+    printf("Size of a double: %02lu bytes\n", sizeof(double));
+    printf("Size of a TestA:  %02lu bytes\n", sizeof(TestA));
+}
+```
+
+``` prompt
+Size of a char:   01 bytes
+Size of a double: 08 bytes
+Size of a TestA:  16 bytes
+```
+
+[cppshell link](pp.sh/5byeg)
+
+OK, now it's just messing with us. If we're locking into _word_ sized boundaries, shouldn't that have been 12?
+
+``` C++
+char   a; // 4  bytes
+double b; // 8  bytes
+// total     12 bytes
+```
+
+There's one more piece to the puzzle, and the c-faq has a great blurb on it [here](http://c-faq.com/struct/align.esr.html)
+
+> On modern 32-bit machines like the SPARC or the Intel 86, or any Motorola chip from the 68020 up, each data iten must usually be ``self-aligned'', beginning on an address that is a multiple of its type size. Thus, 32-bit types must begin on a 32-bit boundary, 16-bit types on a 16-bit boundary, 8-bit types may begin anywhere, struct/array/union types have the alignment of their most restrictive member. The first member of each continuous group of bit fields is typically word-aligned, with all following being continuously packed into following words (though ANSI C requires the latter only for bit-field groups of less than word size).
+
+Let's try something to test this theory:
+
+``` C++
+// Example program
+#include <stdio.h>
+
+struct TestA
+{
+    char a;
+    double b;
+    char c;
+};
+
+int main()
+{
+    printf("Size of a char:   %02lu bytes\n", sizeof(char));
+    printf("Size of a double: %02lu bytes\n", sizeof(double));
+    printf("Size of a TestA:  %02lu bytes\n", sizeof(TestA));
+}
+```
+
+and the output?
+
+``` prompt
+Size of a char:   01 bytes
+Size of a double: 08 bytes
+Size of a TestA:  24 bytes
+```
+
+[link](cpp.sh/7y3u)
+
+I think you're starting to see a pattern here. Padding is done, per element, based on the largest
+type alignment requirements.
+
+For completeness, here's the C++ shell version of the `TestA`/`TestB` structs using the `#pragma pack(1)`: [link](cpp.sh/6tec)
+
+I've purposely avoided talking about pointers. I've done this on purpose as this throws a little more complexity into the mix.
+I will be talking about them at a later point, but for now, I'd like to move on to classes.
+
+## Where we add functionality to our types (example03.h/cpp)
+
+Object Oriented programming.
+
+I'm not goint to talk about Object Oriented programming.
+
+I mean, seriously, in 2017, I think there's enough material on the web to cover Inheritance, Encapsulation, Abstraction, interfaces ...
+that's not what I wanted to write this series about. What I want to talk about is the nitty-gritty of the C++ implementation of classes.
+
+If you're looking for an introduction to Object Oriented Programming in C++, I'd recommend you start [here](https://www3.ntu.edu.sg/home/ehchua/programming/cpp/cp3_OOP.html), [here](http://www.learncpp.com/cpp-tutorial/81-welcome-to-object-oriented-programming/) to start.
+As far as printed material, it's been so long since I've taught C++/OOP, I don't think I can recommend anything remotely good. I'm not sure how well Scott Meyers' series of books
+holds up these days, but they were decent reading back in '03. I do remember using "C++ How to Program" as a teaching resource back in the 90s, but I haven't looked at it in
+over a decade [here](https://www.amazon.com/How-Program-7th-Paul-Deitel/dp/0136117260/ref=sr_1_2?s=books&ie=UTF8&qid=1500351972&sr=1-2)
+
+What I do want to talk about is the syntax of Classes. I think that tends to get lost in the shuffle of folks learning C++, so I don't mind burning
+a bit of time as part of the refresher.
+
+But first, let's look at the `struct` keyword again. We know that it allows us to set up a collection of fields to layout
+a structure in memory. But what if we were had the ability to bind Functions as a field?
+
+like so:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+    }
+};
+```
+
+We've essentially merged fields with functions. Could that work? Go ahead and throw that into the C++ shell [here](http://cpp.sh)
+
+It compiles!
+
+So, ... how do we use it? I mean, we have a new struct that has a function, but how do we go about *doing* something with it?
+
+Well, let's create a new variable of type `Vertex` called `point01`:
+
+``` C++
+int main()
+{
+    Vertex point1;
+}
+```
+
+Add that and compile. Aside from some warnings, that works fine.
+
+So, we already know how to access the fields. What's the chances that accessing the functions is as trivial?
+
+Try this:
+
+``` C++
+int main()
+{
+    Vertex point1;
+    
+    point1.Set(10.0f, 20.0f);
+    
+    printf("The value of point1 is (%f, %f)\n", point1.x, point1.y);
+}
+```
+
+Run it in the C++ shell and ...
+
+``` prompt
+The value of point1 is (10.000000, 20.000000) 
+```
+
+That's pretty much it. The `struct` keyword is all you need to create objects with data and functions!  We're done!
+There's nothing left to learn about C++!
+
+That's total nonsense, I know. There's so much more to cover.
+
+The thing with the `struct` keyword is that everything we've done so far is of `public` scope. That's the default
+scope for anything defined in a struct. That's mostly for backwards compatability, as the original definition of 
+the struct keyword in C didn't have a concept of 'data/functional hiding'.
+
+So, scoping in structs. Like I said before, the default scope for a `struct` is `public`. There's also
+`private` and `protected`.
+
+Both the `private` and `protected` keywords hide elements of your structure. So if you were to do the following:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+    }
+    
+    private:
+    double mX;
+    
+    protected:
+    char buffer[3];
+};
+```
+
+You would not be able to access either `mX` or `buffer` in the main function:
+
+``` C++
+int main()
+{
+    Vertex point1;
+    
+    point1.Set(10.0f, 20.0f);
+    point1.mX = 5.0;
+    
+    printf("The value of point1 is (%f, %f)\n", point1.x, point1.y);
+}
+```
+
+When compiling produces:
+
+``` prompt
+ In function 'int main()':
+16:12: error: 'double Vertex::mX' is private
+28:12: error: within this context
+```
+
+Check it out [here](cpp.sh/46wuk)
+
+However, we can access it from inside the `Vertex` class:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+        mX = inX - inY;
+    }
+    
+    private:
+    double mX;
+    
+    protected:
+    char buffer[3];
+};
+```
+
+Code [here](cpp.sh/3o5ty)
+
+What we've seen so far is that we're hiding `private` and `protected` behind the `struct` barrier.
+We can also use derivation of structs to build object hierarcies:
+
+Creating a new struct called `ColorVertex` like so:
+
+``` C++
+struct Vertex
+{
+    float x;
+    float y;
+    
+    void Set(float inX, float inY)
+    {
+        x = inX;
+        y = inY;
+        mX = inX - inY;
+    }
+    
+    private:
+    double mX;
+    
+    protected:
+    char buffer[3];
+};
+
+struct ColorVertex : Vertex
+{
+    int r;
+    int g;
+    int b;
+};
+```
+
+Allows `ColorVertex` to access all `public` and `protected` members of `Vertex`, but it hides 
+everything that's `private`. Go ahead, try and access `mX` and the `buffer` members of `Vertex`
+through `ColorVertex`. Sandbox is [here](cpp.sh/6nmzf)
+
+OK, so that's a very quick run-though of the `struct` usage as an object.
+
+But we never use it.
+
+NEVER.
+
+OK, that's a lie. We tend to use `structs` when talking about POD (Plain Old Data) types. But
+when you want to define Classes, that's when you use the `class` keyword.
+
+What's the difference between `struct` and `class`? One thing, and one thing only - the default
+access level. For the `struct` keyword, the default access level is `public`. For `class` it's
+`private`.
+
+ - For completeness, POD (Plain Old Data) means nothing more than a struct that contains nothing but data. It can be compelex data, but it contains no 'logic'.
+
+To convert the example over to classes?
+
+``` C++
+// Example program
+#include <stdio.h>
+
+class Vertex
+{
+    public:
+        float x;
+        float y;
+    
+        void Set(float inX, float inY)
+        {
+            x = inX;
+            y = inY;
+            mX = inX - inY;
+        }
+    
+    private:
+        double mX;
+    
+    protected:
+        char buffer[3];
+};
+
+class ColorVertex : public Vertex
+{
+    int r;
+    int g;
+    int b;
+};
+
+int main()
+{
+    ColorVertex point1;
+    
+    point1.Set(10.0f, 20.0f);
+    
+    printf("The value of point1 is (%f, %f)\n", point1.x, point1.y);
+}
+```
+
+A couple of things to note:
+
+ 1. When deriving from `Vertex`, we need to qualify it as `public`. eg `class ColorVertex : public Vertex`
+ 2. If you do not do that, and define it as `class ColorVertex : Vertex` the scope of `Vertex` defaults to `private`
+ 
+So what do you get from doing all that? The current set of code fails to compile due to data and functions being
+inaccessible? It's not trivial to describe the implementation details of `private` inheritance. Think of it like this:
+
+When you privately derive from a base class, all `public` members become `private`. You still have access to all `protected`
+members, but that's it.
+
+So, as an example:
+
+``` C++
+// Example program
+#include <stdio.h>
+
+class Vertex
+{
+    public:
+        float x;
+        float y;
+    
+        void Set(float inX, float inY)
+        {
+            x = inX;
+            y = inY;
+            mX = inX - inY;
+        }
+    
+    private:
+        double mX;
+    
+    protected:
+        void ProtectedSet(float inX, float inY)
+        {
+            x = inX + 5;
+            y = inY + 5;
+        }
+        char buffer[3];
+};
+
+class ColorVertex : protected Vertex
+{
+    public:
+    int r;
+    int g;
+    int b;
+    
+    void ExposedSet(float inX, float inY)
+    {
+        ProtectedSet(inX, inY);
+    }
+    
+    float GetX() { return x; }
+    float GetY() { return y; }
+};
+
+int main()
+{
+    ColorVertex point1;
+    
+    point1.ExposedSet(10.0f, 20.0f);
+    
+    printf("The value of point1 is (%f, %f)\n", point1.GetX(), point1.GetY());
+}
+
+```
+
+link [here](cpp.sh/8oubb)
+
+That is an incredibly convoluted example. I'll see if I can come up with a better one, but
+in all honesty, you tend *not* to use this pattern. I think in all my years of coding, I've
+run across it a handfull of times.
 
 ## Additional references
  - [The Lost Art of C Structure Packing](http://www.catb.org/esr/structure-packing/): Read this. Seriously.
@@ -573,4 +975,5 @@ In C++ shell [link](cpp.sh/6tec)
  - [Packed Structures](https://learn.mikroe.com/packed-structures-make-memory-feel-safe/)
  - [Sven-Hendrik Haase paper on Alignment in C](https://wr.informatik.uni-hamburg.de/_media/teaching/wintersemester_2013_2014/epc-14-haase-svenhendrik-alignmentinc-paper.pdf
  )
+ - [C-Faq blurb](http://c-faq.com/struct/align.html)
  - [And, of course, Wikipedia](https://en.wikipedia.org/wiki/Data_structure_alignment)
