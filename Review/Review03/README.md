@@ -24,7 +24,7 @@ There are a *lot* of options out there: [SDL](https://www.libsdl.org/download-2.
 and see the results for yourself. Now, that list includes engines as well as Graphics libraries
 but I think it illustrates the point; picking a library isn't a trivial task.
 
-I finally chose Allegro. I'll try out other libraries as well, but I went with Allegro because:
+I finally chose [Allegro](https://www.allegro.cc/). I'll try out other libraries as well, but I went with Allegro because:
 
  - It's got a good NUGet integration with Visual C++:  >>[look here](https://wiki.allegro.cc/index.php?title=Windows,_Visual_Studio_2015_and_Nuget_Allegro_5)<<
  - I'm not looking for 3D or complex drawing facilities.
