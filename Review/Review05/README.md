@@ -320,3 +320,248 @@ innerScope: 20
 outer innerScope: 2
 innerScope: 5
 ```
+
+## More Scoping
+
+Let's say we have a class called `Utility`. In it, we want to define some ... utility functions
+Like the ability to test to see if a file exists.
+
+Like this:
+
+``` C++
+#include <stdio.h>
+
+// On windows, use <io.h> instead. And call _access(..) instead of access(..)_
+#include <unistd.h>
+
+
+class Utility
+{
+    public:
+    static bool Exists(const char* filename)
+    {
+        bool result = false;
+        if (access(filename, 0) == 0)
+            result = true;
+            
+        return result;
+    }
+};
+
+int main()
+{
+    printf("Does foo.txt exist? %s\n", Utility::Exists("foo.txt") ? "Yes" : "No");
+}
+```
+
+And since we're running on a remote box, our result:
+
+``` prompt
+Does foo.txt exist? No
+```
+
+[link here](cpp.sh/5324)
+
+
+Some points about what's going on here, as we've added a few things that you may not be familiar
+with.
+
+ 1) The `Utility` class has one static function (classes tend to describe these as 'methods'). Because it's static, you don't have to initialize an instance of the class to use it.
+ 2) However, in order to use it, we have to use the scope resolution operator, along the the class name and the method name, to access it.
+ 3) The method we define must be defined as static for it to be used in this 'global' manner (without instantiating an instance of `Utility`).
+
+That's all well and good, but is that the right way to do this? Maybe we want to have a `Utility` class that has a `File` class inside of it.
+Can we do that? Is that a thing we can do in C++?
+
+Let's try it!
+
+``` C++
+#include <stdio.h>
+#include <unistd.h>
+
+class Utility
+{
+    public:
+    class File
+    {
+        public:
+        static bool Exists(const char* filename)
+        {
+            bool result = false;
+            if (access(filename, 0) == 0)
+                result = true;
+                
+            return result;
+        }
+    };
+};
+
+int main()
+{
+    printf("Does foo.txt exist? %s\n", Utility::File::Exists("foo.txt") ? "Yes" : "No");
+}
+```
+
+Running it in the C++ shell [here](cpp.sh/8yndj)?
+
+``` prompt
+Does foo.txt exist? No
+```
+
+Sweet Zombie Jesus it works!
+
+And there's no real reason for it not to work. We're accessing something that's defined as `static`.
+
+So, what does `static` actually mean?
+
+From [cppreference.com](http://en.cppreference.com/w/cpp/language/static)
+
+> Inside a class definition, the keyword static declares members that are not bound to class instances.
+
+Is this the best way to implement this? Well, let's give you another option, so you can make up your
+own mind. Let's re-write the class we just wrote using a `namespace` instead.
+
+``` C++
+#include <stdio.h>
+#include <unistd.h>
+
+namespace Utility
+{
+    class File
+    {
+        public:
+        static bool Exists(const char* filename)
+        {
+            bool result = false;
+            if (access(filename, 0) == 0)
+                result = true;
+                
+            return result;
+        }
+    };
+};
+
+int main()
+{
+    printf("Does foo.txt exist? %s\n", Utility::File::Exists("foo.txt") ? "Yes" : "No");
+}
+```
+
+[C++ Shell link](cpp.sh/55j4d)
+
+The difference between the two implementations?
+
+``` C++
+// =======================
+// Previous
+class Utility
+{
+    public:
+    class File
+
+// =======================
+// New
+namespace Utility
+{
+    class File
+```
+
+That's the difference. Well, there are other differences ...
+
+ 1) The default visibility in a namespace is `public`. `classes` would be `private`, which is why we had the `public:` in the first definition`.
+ 2) `namespace` affords us another keyword, `using`. This allows us to do the following:
+
+``` C++
+// =======================
+// Previous
+int main()
+{
+    printf("Does foo.txt exist? %s\n", Utility::File::Exists("foo.txt") ? "Yes" : "No");
+
+// =======================
+// New
+using namespace Utility;
+
+int main()
+{
+    printf("Does foo.txt exist? %s\n", File::Exists("foo.txt") ? "Yes" : "No");
+}
+```
+
+[C++ Shell link](cpp.sh/43szr)
+
+And we get the same output. Why would this be a better solution? Well, for starters, if we had multiple
+calls to `File::WhateverMethod`, it saves us some typing.  Is that a big deal?
+
+Well ...
+
+If you've done any digging on the internet for C++ tutorials, you've probably seen a lot of tutorials using
+something akin to: `cout << "Here is a string" << endl;`
+
+`cout` and `endl` live in the Standard library and are in the namespace `std`. Which means you'd need to
+actually do this: `std::cout << "Here is a string" << std::endl;`
+
+Like so:
+
+``` C++
+// Example program
+#include <iostream>
+
+void PrintMe()
+{
+    using namespace std;
+    cout << "Here is some text" << endl;
+}
+
+void PrintMeAgain()
+{
+    std::cout << "Here is some more text" << std::endl;
+}
+
+int main()
+{
+    PrintMe();
+    PrintMeAgain();
+}
+```
+
+``` prompt
+Here is some text
+Here is some more text
+```
+
+[C++ Shell Link](cpp.sh/2om5s)
+
+So, what do we use? Here's a rule I like to go by:
+
+> If what we're designing needs to _only_ have a scope, then a `namespace` is the right choice. Remember that a `class` is a type, and by definition requires data. So if it smells like data, then it's a class.
+
+This is a crazy oversimplification of the process I have in my head, but I think it holds up 90% of the time.
+
+## MEMORY!!!
+
+That's been a fairly long setup to get to this point - a program that actually allocates memory. I've use C++ Shell
+a lot to help kickstart some simple concepts, but this next bit is going to use Allegro, so we will be referencing
+the `Review05` project.
+
+### !!!WARNING!!! The following code is purely for educational purposes ONLY!
+
+I can't stress this enough - the code you are about to see is only for educational purposes. If you were to
+write production code this way, you should be publicly reprimanded for it.
+
+Anyway ...
+
+I'm going to create a simple application that creates a random shape on-screen depending on where
+you click on the mouse. We won't have any idea how many elements we're going to create beforehand
+so we will be dynamically allocating them!  There will also be a lot of code to do this. But I'm
+going to err on the side of verbosity and clarity, rather than performance (read - it's going to
+be far from optimal).
+
+### Design
+
+I'll do a little bit of inheritance here to help illustrate some more OOP idioms. This means
+I'll end up with a set of classes that, in UML, looks like this:
+
+![Image](Images/classdesign01.png)
+
+`Shape` will be an abstract class, with two classes derived from it, `Circle` and `Rectangle`.

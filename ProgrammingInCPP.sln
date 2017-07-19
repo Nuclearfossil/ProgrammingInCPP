@@ -16,7 +16,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Review03", "Review\Review03
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Review04", "Review\Review04\Review04.vcxproj", "{B43C2676-DE8A-4F18-A797-8BAAB39D7B25}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Review05", "Review05\Review05.vcxproj", "{7B59D94C-585D-432B-ACD5-84EE273FE940}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Review05", "Review\Review05\Review05.vcxproj", "{7B59D94C-585D-432B-ACD5-84EE273FE940}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
