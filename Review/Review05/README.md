@@ -97,7 +97,7 @@ void main()
 
 void foo()
 {
-	main.toRun = ex01; // compile error
+    main.toRun = ex01; // compile error
 }
 ```
 
@@ -138,7 +138,7 @@ void main()
 
 void foo()
 {
-	gToRun = ex01; // compiles fine
+    gToRun = ex01; // compiles fine
 }
 
 ```
@@ -150,12 +150,12 @@ Let's say we have a function with a loop:
 ``` C++
 void foo()
 {
-	for (int index = 0; index < 10; index++)
-	{
-	    printf("%i\n", index);
-	}
-	
-	printf("%i\n", index);
+    for (int index = 0; index < 10; index++)
+    {
+        printf("%i\n", index);
+    }
+    
+    printf("%i\n", index);
 }    
 
 ```
@@ -175,12 +175,12 @@ That error refers to:
 ``` C++
 void foo()
 {
-	for (int index = 0; index < 10; index++)
-	{
-	    printf("%i\n", index);
-	}
-	
-	printf("%i\n", index);   // <<== error here
+    for (int index = 0; index < 10; index++)
+    {
+        printf("%i\n", index);
+    }
+    
+    printf("%i\n", index);   // <<== error here
 }    
 ```
 
@@ -191,13 +191,13 @@ A quick change fixes this:
 ``` C++
 void foo()
 {
-	int index = 0;
-	for (; index < 10; index++)
-	{
-	    printf("%i\n", index);
-	}
-	
-	printf("%i\n", index);   // <<== error here
+    int index = 0;
+    for (; index < 10; index++)
+    {
+        printf("%i\n", index);
+    }
+    
+    printf("%i\n", index);   // <<== error here
 }    
 ```
 
@@ -208,17 +208,17 @@ reusing that variable. That's a good thing, IMO. You can now legally do the foll
 ``` C++
 void foo()
 {
-	for (int index = 0; index < 10; index++)
-	{
-	    printf("%i\n", index);
-	}
+    for (int index = 0; index < 10; index++)
+    {
+        printf("%i\n", index);
+    }
 
-	// do other stuff
+    // do other stuff
 
-	for (int index = 5; index < 10; index++)
-	{
-	    // do something else here
-	}
+    for (int index = 5; index < 10; index++)
+    {
+        // do something else here
+    }
 }    
 ```
 
