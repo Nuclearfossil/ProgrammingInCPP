@@ -2,12 +2,8 @@
 #include <allegro5/allegro_primitives.h>
 
 
-Rectangle::Rectangle() : Shape()
-{
-}
-
-Rectangle::Rectangle(float inX, float inY, float width, float height) : Shape(inX, inY), mWidth(width), mHeight(height)
-{}
+Rectangle::Rectangle() : Shape() {}
+Rectangle::Rectangle(float inX, float inY, float width, float height) : Shape(inX, inY), mWidth(width), mHeight(height) {}
 
 
 Rectangle::~Rectangle() {}

@@ -2,12 +2,8 @@
 
 #include <allegro5/allegro_primitives.h>
 
-Circle::Circle() : mRadius(1.0f)
-{
-}
-
-Circle::Circle(float inX, float inY, float radius) : Shape(inX, inY), mRadius(radius)
-{}
+Circle::Circle() : mRadius(1.0f) {}
+Circle::Circle(float inX, float inY, float radius) : Shape(inX, inY), mRadius(radius) {}
 
 Circle::~Circle() {}
 
