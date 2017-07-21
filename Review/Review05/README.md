@@ -1038,3 +1038,7 @@ I can pull from that block. And from the image you can see that it's random data
 but it's not shown in the slide).
 
 Holy crap, that was a long, long review. And I really want to go into more details. But I think that's enough for now.
+
+That was quite the review. And it's debatable that I've covered everything that would be considered 'a review'. But I feel
+that's enough 'basics' to cover for now. It's very possible I'll come back and add/revise this in the future,
+but as a starting point I consider the review over.
