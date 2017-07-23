@@ -1,0 +1,1 @@
+Search.setIndex({docnames:["index"],envversion:52,filenames:["index.rst"],objects:{},objnames:{},objtypes:{},terms:{guid:[],index:0,modul:0,page:0,search:0},titles:["Programming in C++ Review"],titleterms:{document:[],guid:0,indic:0,program:0,programminginc:[],review:0,tabl:0,welcom:[]}})
