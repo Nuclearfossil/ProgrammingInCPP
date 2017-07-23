@@ -562,85 +562,145 @@ following:
  - Offsets to virtual base class subobjects
  - RTTI for the object (depending on compiler options).
 
- What we end up getting, when you take a look at something like this:
+What we end up getting, when you take a look at something like this:
 
- `shapes[index]->Draw();`
+`shapes[index]->Draw();`
 
- Really ends up being more like this:
+Really ends up being more like this:
 
- `(*shapes[index]->vptr[n])(shapes[index])`
+`(*shapes[index]->vptr[n])(shapes[index])`
 
- which is a pointer to a function. Not that `vptr[n]` is a slot in the `vtable` at the `n`th element.
+which is a pointer to a function. Not that `vptr[n]` is a slot in the `vtable` at the `n`th element.
 
- Kind of like this:
+Kind of like this:
 
- ![Image](Images/ClassLayout_UML.png)
+![Image](Images/ClassLayout_UML.png)
 
- So, what's really going on with the compiler is that there is an added virtual function table pointer
- adding into the defintion of the class:
+So, what's really going on with the compiler is that there is an added virtual function table pointer
+adding into the defintion of the class:
 
- ![Image](Images/ClassLayout_vptr_UML.png)
+![Image](Images/ClassLayout_vptr_UML.png)
 
- Which then links to the Virtual Function Table for each class, referring to the appropriate
- virtual function:
+Which then links to the Virtual Function Table for each class, referring to the appropriate
+virtual function:
 
- ![Image](Images/ClassLayout_vptr_references_UML.png)
+![Image](Images/ClassLayout_vptr_references_UML.png)
 
- Hopefully the diagram helps - each class ends up with a virtual function table that then links to the appropriate
- virtual method.
+Hopefully the diagram helps - each class ends up with a virtual function table that then links to the appropriate
+virtual method.
 
- Let's do something a little different - let's add a virtual function into the base and only override it in
- one of the classes:
+Let's do something a little different - let's add a virtual function into the base and only override it in
+one of the classes:
 
- ![Image](Images/ClassLayout_vptr_references_UML.png)
+![Image](Images/ClassLayout_vptr_references_UML.png)
 
- Yes, it can get pretty complex, with vtables pointing across class methods, but that's what
- inheretence means. And, following the object model, that can be pretty damn groovy.
+Yes, it can get pretty complex, with vtables pointing across class methods, but that's what
+inheretence means. And, following the object model, that can be pretty damn groovy.
 
- But it comes with a cost. Let's look at the disassembly difference between Shape (not Virtual) and Circle (virtual)
+But it comes with a cost. Let's look at the disassembly difference between Shape (not Virtual) and Circle (virtual)
 
- ![image](Images/Shape_vs_Circle_disassembly.png)
+![image](Images/Shape_vs_Circle_disassembly.png)
 
- Creation of each object is the same, assembly wise. However invoking the `Draw` function on a
- virtual function incurs a different execution path. Specifically we get a `call` to 
- the `Shape::Draw` method in the non virtualized `Shape` versus the call to an address in the
- virtualized version.
+Creation of each object is the same, assembly wise. However invoking the `Draw` function on a
+virtual function incurs a different execution path. Specifically we get a `call` to 
+the `Shape::Draw` method in the non virtualized `Shape` versus the call to an address in the
+virtualized version.
 
- The cost here is two additional `mov`s to call the virtual `Draw` method. Yeah, I know, that
- doesn't sound like much - two additional assembly instructions. Big whoop.
+The cost here is two additional `mov`s to call the virtual `Draw` method. Yeah, I know, that
+doesn't sound like much - two additional assembly instructions. Big whoop.
 
- Yet that can add up, being invoked several hundred or several thousand times per frame. Remember,
- a frame is 1/30th (or 1/60th, or 1/120th) of a second.
+Yet that can add up, being invoked several hundred or several thousand times per frame. Remember,
+a frame is 1/30th (or 1/60th, or 1/120th) of a second.
 
- But that's not *really* where our code can become slow. One thing C++ compilers do all the time
- is _inline_ code.  You may have seen in some C++ code the use of the keyword `inline` - it's kind
- of the same thing. The goal of the `inline` keyword was to flag the optimizer of the compiler
- to _inline substitution of a function_ rather than invoking a function call. Function calls are
- slower as they mean creating a new stack, pushing data onto that stack, invoking a jump to that
- function, returning from that function and peeling results from that function off the stack.
+But that's not *really* where our code can become slow. One thing C++ compilers do all the time
+is _inline_ code.  You may have seen in some C++ code the use of the keyword `inline` - it's kind
+of the same thing. The goal of the `inline` keyword was to flag the optimizer of the compiler
+to _inline substitution of a function_ rather than invoking a function call. Function calls are
+slower as they mean creating a new stack, pushing data onto that stack, invoking a jump to that
+function, returning from that function and peeling results from that function off the stack.
 
- With virtual functions, you can't inline that code base because you can't infer what the code actually
- is, in the general case. That's it. That's why it can be slow.
+With virtual functions, you can't inline that code base because you can't infer what the code actually
+is, in the general case. That's it. That's why it can be slow.
 
- For stuff you call a few hundred times a frame, that might not be too bad a trade-off for a
- simple architecture. But for complex hierarchies, or deep object trees, you might not want to
- rely on virtual methods.
+For stuff you call a few hundred times a frame, that might not be too bad a trade-off for a
+simple architecture. But for complex hierarchies, or deep object trees, you might not want to
+rely on virtual methods.
 
- As a great read on the tradeoffs between polymorphic code and other options, I offer up this
- fantastic section on Stack Exchange [here](https://softwareengineering.stackexchange.com/questions/301510/in-general-is-it-worth-using-virtual-functions-to-avoid-branching).
+As a great read on the tradeoffs between polymorphic code and other options, I offer up this
+fantastic section on Stack Exchange [here](https://softwareengineering.stackexchange.com/questions/301510/in-general-is-it-worth-using-virtual-functions-to-avoid-branching).
+
+## Finding memory leaks
+
+I was going to write a big ol' post about how to find memory leaks. Like, a completely separate
+project and README.md file and everything.
+
+But there's this video from [Adam Welch](https://www.youtube.com/watch?v=HUZW8m_3XvE) that pretty
+much walks you through how to use Visual Studio's memory profiler.
+
+You should watch it. Go. Now.
+
+OK, so how would we go about profiling our app? How do we find memory leaks in the project associated
+with this codebase?
+
+Pretty simple
+
+### 0. Set up your memory profiling tools
+
+In Debug, run your the `PointerIntro` project. There's a `_getch()` call in the code base that
+forcibly halts the program.  Once you've run it, you'll see this:
+
+![Image](Images/MemoryDebugging01.png)
+
+And then ...
+
+![Image](Images/MemoryDebugging02.png)
 
 
- ## Summary
+### 1. Add Breakpoints at the start and end of your program
+
+So, before you go too far, put some breakpoints in your code. Preferably at the start and just
+before you exit the app. Then re-run the applicaiton in the debugger. When you hit your first
+breakpoint ...
+
+![Image](Images/MemoryDebugging03.png)
+
+Continue debugging and hit your next breakpoint ...
+
+![Image](Images/MemoryDebugging04.png)
+
  
- Well, again that was a longish bit of writing. It's not trivial, but it's good stuff to have
- under your belt. And it's important to understand this stuff, even if you're not digging into
- the guts of low level optimization every day (I know I don't).
+## 2. See where your allocations are
 
- Hope that helps out!
+![Image](Images/MemoryDebugging05.png)
 
- ## Some references:
+As you can see, we end up with a delta of allocation. And it's going in the wrong direction
+(that is, upwards). If you click on any of the higlighted links, you then get to see some
+more detail:
 
- [C++ Virtual functions](http://anderberg.me/2016/06/26/c-virtual-functions/)
+![Image](Images/MemoryDebugging06.png)
+
+Double clicking on one of the entries takes us a little deeper.
+
+![Image](Images/MemoryDebugging07.png)
+
+Double clicking one last time takes us to the allocation in question.
+
+![Image](Images/MemoryDebugging08.png)
+
+Debugging memory leaks has never been so easy!
+
+
+## Summary
+
+Well, again that was a longish bit of writing. It's not trivial, but it's good stuff to have
+under your belt. And it's important to understand this stuff, even if you're not digging into
+the guts of low level optimization every day (I know I don't).
+
+Hope that helps out!
+
+## Some references:
+
+[C++ Virtual functions](http://anderberg.me/2016/06/26/c-virtual-functions/)
 
 
 
