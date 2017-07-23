@@ -46,11 +46,11 @@ The other thing to note is that the Linker will also link in other 'things' from
 
 Visually, it kind of looks like this process:
 
-.. image:: images/Review01/CompilerSteps.png
+.. image:: Images/Review01/CompilerSteps.png
 
 The next question is, how does the compiler know how to find the actual source code for the function `printf`? Trust me (or go look yourself), it's not declared in `stdio.h`. We know that the linker will eventually resolve it into a library, but how do we tell the compiler what library to use? We're lucky in Visual Studio, there's a nice dialog for that:
 
-.. image:: images/Review01/LinkerProperties.png
+.. image:: Images/Review01/LinkerProperties.png
 
 In other build environments, those compiler options can be passed through on the command line, through a make file, or another build system (I expect XCode does something similar to Visual Studio).
 

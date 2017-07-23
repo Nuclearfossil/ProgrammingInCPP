@@ -199,7 +199,7 @@ But first, the code!
 
 And, as an output, we get the following:
 
-.. image:: images/Review03/Review03.gif
+.. image:: Images/Review03/Review03.gif
 
 C++ Comments
 --------------------------------------------------------------------------------
