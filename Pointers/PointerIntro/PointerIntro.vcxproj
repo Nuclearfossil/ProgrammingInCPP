@@ -146,10 +146,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Circle.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="Shape.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\ClassLayout_UML.png" />
+    <Image Include="..\Images\ClassLayout_vptr_references_UML.png" />
+    <Image Include="..\Images\ClassLayout_vptr_UML.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,7 +23,7 @@ interested in what's happening with memory.
 
 Why's that? It's pretty simple, actually: 
 
-> C++ if horrifically bad at dealing with memory.
+> C++ is horrifically bad at dealing with memory.
 
 _What??_
 
@@ -34,7 +34,7 @@ Let's look at an incredibly simple C# example:
 
 ``` C#
 using System;
-					
+
 public class Program
 {
 	public class Shape
@@ -399,8 +399,248 @@ other reasons.
 
 But what about C++?
 
-Well, by default, C++ has no concept of ownership. Or reference counting.
+By default, C++ has no concept of ownership. Or reference counting. Unless you add it yourself. But I'm getting way, way ahead of myself.
+(To be fair, the newest C++ standards adds 'smart pointers' that do this and are considered part of "modern C++". But that's a topic for later.)
 
-Unless you add it yourself. But I'm getting way, way ahead of myself.
+At this point, consider that you have to be dilligent of where/how you allocate/assign pointers.
 
-At this point, consider that you have to be very aware of where you allocate/assigner pointers.
+## Class layout in memory
+
+What do we know about classes so far?
+
+ - The logic (methods) for clases live in the 'text' memory block for a program.
+ - Data (properties) for classes live either in the Heap or Stack space for a program.
+ - Classes without any properties have zero byte sizes, but they actually report back a non-zero size (usually but not guaranteed to be 1) when you query their size.
+ - Classes, via 'hidden compiler magic' have an additional `this` keyword, which maps to the address of the classes instance.
+
+Here's a great breakdown of the `this` keyword on [cppreference.com](http://en.cppreference.com/w/cpp/language/this)
+
+So, what happens when we start to consider polymorphism in C++? For example, going back to our `Shape`, `Circle` and `Rectangle`
+classes from Review05? Let's bring them on over and try them out!  I'll be removing the Allegro
+references so that this is just a console application.
+
+Now let's see what we get when we start mucking around with our `Shape` class again. Currently
+our `Shape` class only has an integer in it, but the class is 4 bytes large. Let's put it back
+having just a `Point2D` as it's sole property:
+
+``` C++
+class ShapeWithPoint
+{
+public:
+    ShapeWithPoint();
+    ~ShapeWithPoint();
+
+    void Draw();
+
+    Point2D mCenter;
+};
+```
+
+I'll add some `printf` code back into main:
+
+`printf("What's the size of a ShapeWithPoint? %lu\n", sizeof(ShapeWithPoint));`
+
+and our result:
+
+``` prompt
+What's the size of a ShapeWithPoint? 8
+```
+
+That makes sense, `Point2D` has two floats (4 bytes each).
+
+Now, what happens if we make one of the classes virtual?
+
+``` C++
+class ShapeWithVirtual
+{
+public:
+    ShapeWithVirtual();
+    virtual ~ShapeWithVirtual();
+
+    void Draw();
+
+    int value;
+};
+```
+
+All we're doing is making the destructor virtual. It allows derived classes
+to be delted by deleting a reference to the base class. We'll talk a bit about
+that later. However, we're talking about class sizes. So, what do we get now?
+
+``` prompt
+What's the size of a ShapeWithVirtual? 16
+```
+
+Wait wait wait. We didn't add any new data to the class! why is it bigger? Why is
+it 8 bytes bigger? Let's try something - in your code for both `ShapeWithPoint` and 
+`ShapeWithVirtual` replace the `Point2D mCenter;` with a `int value;`.
+
+The results are ...
+
+``` prompt
+What's the size of a ShapeWithPoint? 4
+What's the size of a ShapeWithVirtual? 16
+```
+
+What you're seeing is the effect of the V-Table in a class. Going by the 'rule of "the 'largest data type in the class' alignment"
+we see that we are on 8 byte alignments. Play around with that a bit, if you
+want to be convinced. Or, if you want to be 100% sure, just use `#pragma pack(1)`
+like so:
+
+``` C++
+#pragma pack(push)
+#pragma pack(1)
+class ShapeWithPoint
+{
+public:
+    ShapeWithPoint();
+    ~ShapeWithPoint();
+
+    void Draw();
+
+    // Point2D mCenter;
+    int value;
+};
+
+class ShapeWithVirtual
+{
+public:
+    ShapeWithVirtual();
+    virtual ~ShapeWithVirtual();
+
+    void Draw();
+
+    // Point2D mCenter;
+    int value;
+};
+#pragma pack(pop)
+```
+
+And the output?
+
+``` prompt
+What's the size of a ShapeWithPoint? 4
+What's the size of a ShapeWithVirtual? 12
+```
+
+So how does C++ implement polymorphism? Knowing what it is and knowing how it's implemented
+are two very, very different things.
+
+With our `Shape`, `Circle` and 'Rectangle` classes, we've seen that we can keep track of a
+`Shape` pointer, but put a pointer to an instance of a `Circle` in there and we call the `Draw`
+method, it will resolve it to the correct object instance's `Draw` call. You know, like we did
+in `Review05`:
+
+``` C++
+VirtualShape** shapes = new VirtualShape*[10];
+
+shapes[0] = new Circle(20.0f, 30.0f, 5.0f);
+shapes[1] = new Circle(40.0f, 60.0f, 10.0f);
+shapes[2] = new Circle(60.0f, 90.0f, 15.0f);
+shapes[3] = new Circle(80.0f, 120.0f, 20.0f);
+shapes[4] = new Circle(100.0f, 150.0f, 30.0f);
+shapes[5] = new Rectangle(200.0f, 300.0f, 5.0f, 5.0f);
+shapes[6] = new Rectangle(220.0f, 330.0f, 10.0f, 10.0f);
+shapes[7] = new Rectangle(240.0f, 360.0f, 15.0f, 15.0f);
+shapes[8] = new Rectangle(260.0f, 390.0f, 20.0f, 20.0f);
+shapes[9] = new Rectangle(280.0f, 420.0f, 25.0f, 25.0f);
+
+for (int index = 0; index < 10; index++)
+{
+    shapes[index]->Draw();
+}
+```
+
+That's polymorphism.  But how does it work, under the hood? Each compiler can do it a little
+differently, but it really comes down to a Virtual Table and a Virtual Table Pointer.
+
+In each instance of a class, a `Virtual Table Pointer` (commonly refered to as a `vptr`) is created - it is a pointer to a table
+of virtual functions (again, commonly referred to as a `vtable`).  `vtable`s usually contain the
+following:
+
+ - Virtual function dispatch information.
+ - Offsets to virtual base class subobjects
+ - RTTI for the object (depending on compiler options).
+
+ What we end up getting, when you take a look at something like this:
+
+ `shapes[index]->Draw();`
+
+ Really ends up being more like this:
+
+ `(*shapes[index]->vptr[n])(shapes[index])`
+
+ which is a pointer to a function. Not that `vptr[n]` is a slot in the `vtable` at the `n`th element.
+
+ Kind of like this:
+
+ ![Image](Images/ClassLayout_UML.png)
+
+ So, what's really going on with the compiler is that there is an added virtual function table pointer
+ adding into the defintion of the class:
+
+ ![Image](Images/ClassLayout_vptr_UML.png)
+
+ Which then links to the Virtual Function Table for each class, referring to the appropriate
+ virtual function:
+
+ ![Image](Images/ClassLayout_vptr_references_UML.png)
+
+ Hopefully the diagram helps - each class ends up with a virtual function table that then links to the appropriate
+ virtual method.
+
+ Let's do something a little different - let's add a virtual function into the base and only override it in
+ one of the classes:
+
+ ![Image](Images/ClassLayout_vptr_references_UML.png)
+
+ Yes, it can get pretty complex, with vtables pointing across class methods, but that's what
+ inheretence means. And, following the object model, that can be pretty damn groovy.
+
+ But it comes with a cost. Let's look at the disassembly difference between Shape (not Virtual) and Circle (virtual)
+
+ ![image](Images/Shape_vs_Circle_disassembly.png)
+
+ Creation of each object is the same, assembly wise. However invoking the `Draw` function on a
+ virtual function incurs a different execution path. Specifically we get a `call` to 
+ the `Shape::Draw` method in the non virtualized `Shape` versus the call to an address in the
+ virtualized version.
+
+ The cost here is two additional `mov`s to call the virtual `Draw` method. Yeah, I know, that
+ doesn't sound like much - two additional assembly instructions. Big whoop.
+
+ Yet that can add up, being invoked several hundred or several thousand times per frame. Remember,
+ a frame is 1/30th (or 1/60th, or 1/120th) of a second.
+
+ But that's not *really* where our code can become slow. One thing C++ compilers do all the time
+ is _inline_ code.  You may have seen in some C++ code the use of the keyword `inline` - it's kind
+ of the same thing. The goal of the `inline` keyword was to flag the optimizer of the compiler
+ to _inline substitution of a function_ rather than invoking a function call. Function calls are
+ slower as they mean creating a new stack, pushing data onto that stack, invoking a jump to that
+ function, returning from that function and peeling results from that function off the stack.
+
+ With virtual functions, you can't inline that code base because you can't infer what the code actually
+ is, in the general case. That's it. That's why it can be slow.
+
+ For stuff you call a few hundred times a frame, that might not be too bad a trade-off for a
+ simple architecture. But for complex hierarchies, or deep object trees, you might not want to
+ rely on virtual methods.
+
+ As a great read on the tradeoffs between polymorphic code and other options, I offer up this
+ fantastic section on Stack Exchange [here](https://softwareengineering.stackexchange.com/questions/301510/in-general-is-it-worth-using-virtual-functions-to-avoid-branching).
+
+
+ ## Summary
+ 
+ Well, again that was a longish bit of writing. It's not trivial, but it's good stuff to have
+ under your belt. And it's important to understand this stuff, even if you're not digging into
+ the guts of low level optimization every day (I know I don't).
+
+ Hope that helps out!
+
+ ## Some references:
+
+ [C++ Virtual functions](http://anderberg.me/2016/06/26/c-virtual-functions/)
+
+
+

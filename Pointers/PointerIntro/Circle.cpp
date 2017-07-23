@@ -1,6 +1,6 @@
 #include "Circle.h"
 
-#include <allegro5/allegro_primitives.h>
+#include <stdio.h>
 
 Circle::Circle() : mRadius(1.0f) {}
 Circle::Circle(float inX, float inY, float radius) : VirtualShape(inX, inY), mRadius(radius) {}
@@ -9,5 +9,5 @@ Circle::~Circle() {}
 
 void Circle::Draw()
 {
-    al_draw_circle(mCenter.x, mCenter.y, mRadius, al_map_rgb(255, 255, 255), 1.0f);
+    printf("Drawing a circle at (%f,%f), radius %f\n",mCenter.x, mCenter.y, mRadius);
 }
