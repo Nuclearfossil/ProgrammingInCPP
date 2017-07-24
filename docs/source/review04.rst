@@ -1,7 +1,7 @@
 Review 04 - Where we discuss structs, classes and other stuff
-################################################################################
+***********************************************************************
 Overview
-================================================================================
+=======================================================================
 The source code this time around is going to be a little different. We're going to have multiple
 examples to go over. So this time, the `main.cpp` will work as a driver, executing optional `examples`.
 
@@ -212,14 +212,18 @@ But then we have that ``extern "C"`` ... that sure doesn't look like that's what
 
 But it kind of is. Here's what Microsoft has to say about the ``extern`` keyword:
 
-| The ``extern`` keyword declares a variable or function and specifies that it has external linkage (its name is visible from files other than the one in which it's defined). When modifying a variable, `extern` specifies that the variable has static duration (it is allocated when the program begins and deallocated when the program ends). The variable or function may be defined in another source file, or later in the same file. Declarations of variables and functions at file scope are external by default.
+    | The ``extern`` keyword declares a variable or function and specifies that it has external linkage
+      (its name is visible from files other than the one in which it's defined). When modifying a variable,
+      ``extern`` specifies that the variable has static duration (it is allocated when the program begins and
+      deallocated when the program ends). The variable or function may be defined in another source file, or
+      later in the same file. Declarations of variables and functions at file scope are external by default.
 
 The key takeaway from that is that is specifies the linkage conventions. From a little further 
 down in the docs `Microsoft Docs <https://docs.microsoft.com/en-us/cpp/cpp/using-extern-to-specify-linkage>`_
 
-| In C++, when used with a string, extern specifies that the linkage conventions of another language are being used for the declarator(s). C functions and data can be accessed only if they are previously declared as having C linkage. However, they must be defined in a separately compiled translation unit.
-| 
-| Microsoft C++ supports the strings "C" and "C++" in the string-literal field. All of the standard include files use the extern "C" syntax to allow the run-time library functions to be used in C++ programs.
+    | In C++, when used with a string, extern specifies that the linkage conventions of another language are being used for the declarator(s). C functions and data can be accessed only if they are previously declared as having C linkage. However, they must be defined in a separately compiled translation unit.
+    | 
+    | Microsoft C++ supports the strings "C" and "C++" in the string-literal field. All of the standard include files use the extern "C" syntax to allow the run-time library functions to be used in C++ programs.
 
 In short, this enforces the C linkage rules for anything encompassed in the the braces. This isn't
 a cheat to force code to be 'pure C', but it does help enfoce *some* rules (alllinker based rules).
@@ -552,7 +556,7 @@ And the results?
     testA.b [76] testB.b [76]
     The memory blocks are equal!
 
-You can see this in the C++ shell [here](cpp.sh/8756o)
+You can see this in the C++ shell `padding example 01 <cpp.sh/8756o>`_
 
 The struct should give you a good idea as to what it looks like, but I like pictures ...
 
@@ -601,12 +605,12 @@ OK, now it's just messing with us. If we're locking into *word* sized boundaries
 
 There's one more piece to the puzzle, and the c-faq has a great blurb on it `On the C-faq <http://c-faq.com/struct/align.esr.html>`_
 
-| On modern 32-bit machines like the SPARC or the Intel 86, or any Motorola chip from the 68020 up, each data iten must 
-| usually be "self-aligned", beginning on an address that is a multiple of its type size. Thus, 32-bit types must begin 
-| on a 32-bit boundary, 16-bit types on a 16-bit boundary, 8-bit types may begin anywhere, struct/array/union types have 
-| the alignment of their most restrictive member. The first member of each continuous group of bit fields is typically 
-| word-aligned, with all following being continuously packed into following words (though ANSI C requires the latter only 
-| for bit-field groups of less than word size).
+    | On modern 32-bit machines like the SPARC or the Intel 86, or any Motorola chip from the 68020 up, each data iten must 
+      usually be "self-aligned", beginning on an address that is a multiple of its type size. Thus, 32-bit types must begin 
+      on a 32-bit boundary, 16-bit types on a 16-bit boundary, 8-bit types may begin anywhere, struct/array/union types have 
+      the alignment of their most restrictive member. The first member of each continuous group of bit fields is typically 
+      word-aligned, with all following being continuously packed into following words (though ANSI C requires the latter only 
+      for bit-field groups of less than word size).
 
 Let's try something to test this theory:
 
@@ -656,15 +660,17 @@ I'm not goint to talk about Object Oriented programming.
 I mean, seriously, in 2017, I think there's enough material on the web to cover Inheritance, Encapsulation, Abstraction, interfaces ...
 that's not what I wanted to write this series about. What I want to talk about is the nitty-gritty of the C++ implementation of classes.
 
-If you're looking for an introduction to Object Oriented Programming in C++, I'd recommend you start [here](https://www3.ntu.edu.sg/home/ehchua/programming/cpp/cp3_OOP.html), [here](http://www.learncpp.com/cpp-tutorial/81-welcome-to-object-oriented-programming/) to start.
+If you're looking for an introduction to Object Oriented Programming in C++, I'd recommend you start 
+`OOP Introduction here <https://www3.ntu.edu.sg/home/ehchua/programming/cpp/cp3_OOP.html>`_, 
+`Welcome to OOP here <http://www.learncpp.com/cpp-tutorial/81-welcome-to-object-oriented-programming/>`_ to start.
 As far as printed material, it's been so long since I've taught C++/OOP, I don't think I can recommend anything remotely good. I'm not sure how well Scott Meyers' series of books
 holds up these days, but they were decent reading back in '03. I do remember using "C++ How to Program" as a teaching resource back in the 90s, but I haven't looked at it in
-over a decade [here](https://www.amazon.com/How-Program-7th-Paul-Deitel/dp/0136117260/ref=sr_1_2?s=books&ie=UTF8&qid=1500351972&sr=1-2)
+over a decade `How to Program C++ by Paul Deitel here <https://www.amazon.com/How-Program-7th-Paul-Deitel/dp/0136117260/ref=sr_1_2?s=books&ie=UTF8&qid=1500351972&sr=1-2>`_
 
 What I do want to talk about is the syntax of Classes. I think that tends to get lost in the shuffle of folks learning C++, so I don't mind burning
 a bit of time as part of the refresher.
 
-But first, let's look at the `struct` keyword again. We know that it allows us to set up a collection of fields to layout
+But first, let's look at the ``struct`` keyword again. We know that it allows us to set up a collection of fields to layout
 a structure in memory. But what if we were had the ability to bind Functions as a field?
 
 like so:
@@ -683,7 +689,7 @@ like so:
         }
     };
 
-We've essentially merged fields with functions. Could that work? Go ahead and throw that into the C++ shell [here](http://cpp.sh)
+We've essentially merged fields with functions. Could that work? Go ahead and throw that into the C++ shell `example for fields with functions here <http://cpp.sh>`_
 
 It compiles!
 
@@ -721,19 +727,19 @@ Run it in the C++ shell and ...
 
     The value of point1 is (10.000000, 20.000000) 
 
-That's pretty much it. The `struct` keyword is all you need to create objects with data and functions!  We're done!
+That's pretty much it. The ``struct`` keyword is all you need to create objects with data and functions!  We're done!
 There's nothing left to learn about C++!
 
 That's total nonsense, I know. There's so much more to cover.
 
-The thing with the `struct` keyword is that everything we've done so far is of `public` scope. That's the default
+The thing with the ``struct`` keyword is that everything we've done so far is of ``public`` scope. That's the default
 scope for anything defined in a struct. That's mostly for backwards compatability, as the original definition of 
 the struct keyword in C didn't have a concept of 'data/functional hiding'.
 
-So, scoping in structs. Like I said before, the default scope for a `struct` is `public`. There's also
-`private` and `protected`.
+So, scoping in structs. Like I said before, the default scope for a ``struct`` is ``public``. There's also
+``private`` and ``protected``.
 
-Both the `private` and `protected` keywords hide elements of your structure. So if you were to do the following:
+Both the ``private`` and ``protected`` keywords hide elements of your structure. So if you were to do the following:
 
 .. code-block:: C++
 
@@ -755,7 +761,7 @@ Both the `private` and `protected` keywords hide elements of your structure. So 
         char buffer[3];
     };
 
-You would not be able to access either `mX` or `buffer` in the main function:
+You would not be able to access either ``mX`` or ``buffer`` in the main function:
 
 .. code-block:: C++
 
@@ -777,9 +783,9 @@ When compiling produces:
     16:12: error: 'double Vertex::mX' is private
     28:12: error: within this context
 
-Check it out [here](cpp.sh/46wuk)
+Check it out `with a private and protected example here <cpp.sh/46wuk>`_
 
-However, we can access it from inside the `Vertex` class:
+However, we can access it from inside the ``Vertex`` class:
 
 .. code-block:: C++
 
@@ -802,12 +808,12 @@ However, we can access it from inside the `Vertex` class:
         char buffer[3];
     };
 
-Code [here](cpp.sh/3o5ty)
+Code `with another a private and protected example here <cpp.sh/3o5ty>`_
 
-What we've seen so far is that we're hiding `private` and `protected` behind the `struct` barrier.
+What we've seen so far is that we're hiding ``private`` and ``protected`` behind the ``struct`` barrier.
 We can also use derivation of structs to build object hierarcies:
 
-Creating a new struct called `ColorVertex` like so:
+Creating a new struct called ``ColorVertex`` like so:
 
 .. code-block:: C++
 
@@ -839,7 +845,7 @@ Creating a new struct called `ColorVertex` like so:
 
 Allows `ColorVertex` to access all `public` and `protected` members of `Vertex`, but it hides 
 everything that's `private`. Go ahead, try and access `mX` and the `buffer` members of `Vertex`
-through `ColorVertex`. Sandbox is [here](cpp.sh/6nmzf)
+through `ColorVertex`. `Sandbox is here <cpp.sh/6nmzf>`_
 
 OK, so that's a very quick run-though of the `struct` usage as an object.
 
@@ -847,14 +853,15 @@ But we never use it.
 
 NEVER.
 
-OK, that's a lie. We tend to use `structs` when talking about POD (Plain Old Data) types. But
-when you want to define Classes, that's when you use the `class` keyword.
+OK, that's a lie. We tend to use ``structs`` when talking about POD (Plain Old Data) types. But
+when you want to define Classes, that's when you use the ``class`` keyword.
 
-What's the difference between `struct` and `class`? One thing, and one thing only - the default
-access level. For the `struct` keyword, the default access level is `public`. For `class` it's
-`private`.
+What's the difference between ``struct`` and ``class``? One thing, and one thing only - the default
+access level. For the `struct` keyword, the default access level is ``public``. For ``class`` it's
+``private``.
 
- - For completeness, POD (Plain Old Data) means nothing more than a struct that contains nothing but data. It can be compelex data, but it contains no 'logic'.
+ - For completeness, POD (Plain Old Data) means nothing more than a struct that contains nothing but data. 
+   It can be compelex data, but it contains no 'logic'.
 
 To convert the example over to classes?
 
@@ -901,13 +908,13 @@ To convert the example over to classes?
 
 A couple of things to note:
 
- #. When deriving from `Vertex`, we need to qualify it as `public`. eg `class ColorVertex : public Vertex`
- #. If you do not do that, and define it as `class ColorVertex : Vertex` the scope of `Vertex` defaults to `private`
+ #. When deriving from ``Vertex``, we need to qualify it as ``public``. eg ``class ColorVertex : public Vertex``
+ #. If you do not do that, and define it as ``class ColorVertex : Vertex`` the scope of `Vertex` defaults to ``private``
  
 So what do you get from doing all that? The current set of code fails to compile due to data and functions being
-inaccessible? It's not trivial to describe the implementation details of `private` inheritance. Think of it like this:
+inaccessible? It's not trivial to describe the implementation details of ``private`` inheritance. Think of it like this:
 
-When you privately derive from a base class, all `public` members become `private`. You still have access to all `protected`
+When you privately derive from a base class, all ``public`` members become ``private``. You still have access to all ``protected``
 members, but that's it.
 
 So, as an example:
@@ -967,7 +974,7 @@ So, as an example:
         printf("The value of point1 is (%f, %f)\n", point1.GetX(), point1.GetY());
     }
 
-link [here](cpp.sh/8oubb)
+`link to the example is here <cpp.sh/8oubb>`_
 
 That is an incredibly convoluted example. I'll see if I can come up with a better one, but
 in all honesty, you tend *not* to use this pattern. I think in all my years of coding, I've

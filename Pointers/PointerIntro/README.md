@@ -592,7 +592,7 @@ virtual method.
 Let's do something a little different - let's add a virtual function into the base and only override it in
 one of the classes:
 
-![Image](Images/ClassLayout_vptr_references_UML.png)
+![Image](Images/ClassLayout_vptr_references02_UML.png)
 
 Yes, it can get pretty complex, with vtables pointing across class methods, but that's what
 inheretence means. And, following the object model, that can be pretty damn groovy.

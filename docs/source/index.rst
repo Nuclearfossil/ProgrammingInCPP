@@ -63,3 +63,5 @@ Intermediate C++
    review02
    review03
    review04
+   review05
+   pointers01

@@ -1,5 +1,5 @@
-C++ Review Part 2
-*********************************************
+Review 02 - Where we talk about some of the tools
+***********************************************************************
 Overview
 =============================================
 In this section, we're going to dig further into building C++ code and less so about the language itself. To do 

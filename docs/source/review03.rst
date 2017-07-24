@@ -1,5 +1,5 @@
-Review 3 - Where we start coding
-#########################################################
+Review 03 - Where we start coding
+***********************************************************************
 Summary
 =========================================================
 Up to this point, we've been working through some fundamental of setting up 
