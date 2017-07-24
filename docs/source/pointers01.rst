@@ -684,6 +684,6 @@ know I don't).
 
 Hope that helps out!
 
-## Some references:
+Some references:
 =======================================================================================================================
  - `C++ Virtual functions <http://anderberg.me/2016/06/26/c-virtual-functions/>`_
