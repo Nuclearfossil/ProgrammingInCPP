@@ -1,6 +1,6 @@
 # Programming In C++
 
-An introductory tutorial/review of the C++ programming language
+An introductory tutorial/review of the C++ programming language. You can find the latest documentation on [ReadTheDocs.org](http://programmingincpp.readthedocs.io/en/latest/index.html)
 
 ## Goals
 
