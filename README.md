@@ -1,6 +1,6 @@
 # Programming In C++
 
-An introductory tutorial/review of the C++ programming language
+An introductory tutorial/review of the C++ programming language. You can find the latest documentation on [ReadTheDocs.org](http://programmingincpp.readthedocs.io/en/latest/index.html)
 
 ## Goals
 
@@ -23,8 +23,8 @@ improving the build process, and so on.
 
 - Pointer definition
 - Stack vs Heap allocations
-- Finding memory leaks
 - Layout of classes in memory
+- Finding memory leaks
 
 ### Intermediate C++
 

@@ -8,26 +8,9 @@
 #include <conio.h>
 #include <memory.h>
 
-class Shape
-{
-public:
-    Shape()
-    {
-        printf("  -> Shape Constructor\n");
-    }
-
-    ~Shape()
-    {
-        printf("  -> Shape Destructort\n");
-    }
-
-    void Draw()
-    {
-        printf("  -> Drawing a shape %d\n", value);
-    }
-
-    int value;
-};
+#include "Shape.h"
+#include "Circle.h"
+#include "Rectangle.h"
 
 void main()
 {
@@ -84,6 +67,29 @@ void main()
 
     printf("Deleting arrayofShapes03\n");
     delete[] arrayOfShapes03;
+
+    // What was the size of a Shape that contained a Point2D?
+    printf("What's the size of a ShapeWithPoint? %lu\n", sizeof(ShapeWithPoint));
+
+    // What do we get when we add only a virtual method to a Shape class
+    printf("What's the size of a ShapeWithVirtual? %lu\n", sizeof(ShapeWithVirtual));
+
+    // Let's look at VirtualShape:
+    printf("What's the size of a VirtualShape? %lu\n", sizeof(VirtualShape));
+    printf("What's the size of a Circle? %lu\n", sizeof(Circle));
+    printf("What's the size of a Rectangle? %lu\n", sizeof(Rectangle));
+
+    Shape* shapeNoVirtual = new Shape();
+
+    shapeNoVirtual->Draw();
+
+    VirtualShape* shapeCircleVirtual = new Circle();
+
+    shapeCircleVirtual->Draw();
+
+    VirtualShape* shapeRectangleVirtual = new Rectangle();
+
+    shapeRectangleVirtual->Draw();
 
     printf("Press any key to continue:");
     _getch();

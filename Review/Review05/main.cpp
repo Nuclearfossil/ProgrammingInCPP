@@ -21,7 +21,7 @@ void main()
     ALLEGRO_DISPLAY* display = al_create_display(800, 600);
     gFont = al_create_builtin_font();
 
-    Shape** shapes = new Shape*[10];
+    VirtualShape** shapes = new VirtualShape*[10];
 
     shapes[0] = new Circle(20.0f, 30.0f, 5.0f);
     shapes[1] = new Circle(40.0f, 60.0f, 10.0f);

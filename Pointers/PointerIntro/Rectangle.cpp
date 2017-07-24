@@ -1,5 +1,5 @@
 #include "Rectangle.h"
-#include <allegro5/allegro_primitives.h>
+#include <stdio.h>
 
 
 Rectangle::Rectangle() : VirtualShape() {}
@@ -10,9 +10,7 @@ Rectangle::~Rectangle() {}
 
 void Rectangle::Draw()
 {
-    al_draw_rectangle(
+    printf( "Drawing a rectangle at (%f, %f, %f, %f)\n",
         mCenter.x - (mWidth / 2.0f), mCenter.y - (mHeight / 2.0f),
-        mCenter.x + (mWidth / 2.0f), mCenter.y + (mHeight / 2.0f),
-        al_map_rgb(255, 255, 255),
-        1.0f);
+        mCenter.x + (mWidth / 2.0f), mCenter.y + (mHeight / 2.0f));
 }

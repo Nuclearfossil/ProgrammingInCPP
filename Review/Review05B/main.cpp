@@ -11,13 +11,13 @@ struct Point2D
     }
 };
 
-class Shape
+class VirtualShape
 {
 public:
-    Shape();
-    Shape(float inX, float inY);
+    VirtualShape();
+    VirtualShape(float inX, float inY);
 
-    virtual ~Shape();
+    virtual ~VirtualShape();
 
     Point2D mCenter;
 
@@ -27,7 +27,7 @@ public:
 
 void main()
 {
-    Shape** shapes = new Shape*[10];
+    VirtualShape** shapes = new VirtualShape*[10];
     int* valueA = new int;
     int* valueB = new int();
 

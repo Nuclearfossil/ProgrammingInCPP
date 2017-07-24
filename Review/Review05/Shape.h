@@ -12,13 +12,13 @@ struct Point2D
     }
 };
 
-class Shape
+class VirtualShape
 {
 public:
-    Shape();
-    Shape(float inX, float inY);
+    VirtualShape();
+    VirtualShape(float inX, float inY);
 
-    virtual ~Shape();
+    virtual ~VirtualShape();
 
     Point2D mCenter;
 

@@ -22,7 +22,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Review05B", "Review\Review0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 - Pointers", "02 - Pointers", "{5279D35C-6CA0-40D9-A142-39EDC5BD97C6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointerIntro", "Pointers\PointerIntro\PointerIntro\PointerIntro.vcxproj", "{679E13A8-8278-4DEF-948F-D379ED052758}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointerIntro", "Pointers\PointerIntro\PointerIntro.vcxproj", "{679E13A8-8278-4DEF-948F-D379ED052758}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
