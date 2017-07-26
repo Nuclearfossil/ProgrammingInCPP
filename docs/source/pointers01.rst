@@ -12,7 +12,8 @@ With that said, I forsee the majority of these projects being console applicatio
 portable fairly easily to other compilers/OSes. Making them Windows applications will hamper that. I also will be 
 avoiding using Allegro this time around as I want to keep us focused on memory and pointers.
 
-## Why are we looking at pointers?
+Why are we looking at pointers?
+=======================================================================================================================
 
 If you come from other languages like C#, Java, Python, you really haven't had to worry a lot about memory, from a truly 
 lower level standpoint. However, with C++, you *will* be very interested in what's happening with memory.

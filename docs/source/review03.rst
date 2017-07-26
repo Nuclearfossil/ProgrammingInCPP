@@ -1,17 +1,15 @@
 Review 03 - Where we start coding
-***********************************************************************
+***********************************************************************************************************************
 Summary
-=========================================================
-Up to this point, we've been working through some fundamental of setting up 
-and building code. We haven't actually made a program that **does** anything.
-I've spent a bit of time trying to figure out what our actual review project
-would be that is *something* other than a trivial ``Hello World`` example. I wanted
-it to be something that is both simple, but has some relevance.
+=======================================================================================================================
+Up to this point, we've been working through some fundamental of setting up and building code. We haven't actually made 
+a program that **does** anything. I've spent a bit of time trying to figure out what our actual review project would be 
+that is *something* other than a trivial ``Hello World`` example. I wanted it to be something that is both simple, but 
+has some relevance.
 
-Since we all have some interest in graphics, I took around to see what's out there
-for simple graphics abstractions. I don't want to go over OpenGL or DirectX just yet;
-I've covered both of those, in C# in other tutorials. This set of reviews is about
-C++.
+Since we all have some interest in graphics, I took around to see what's out there for simple graphics abstractions. I 
+don't want to go over OpenGL or DirectX just yet; I've covered both of those, in C# in other tutorials. This set of 
+reviews is about C++.
 
 There are a *lot* of options out there: 
 
@@ -24,33 +22,33 @@ There are a *lot* of options out there:
 - `Magnum <https://github.com/mosra/magnum>`_
 
 ... the list is quite large. Don't believe me? Go to `Github and search <https://github.com/search?l=C%2B%2B&q=graphics&type=Repositories&utf8=✓>`_
-and see the results for yourself. Now, that list includes engines as well as Graphics libraries
-but I think it illustrates the point; picking a library isn't a trivial task.
+and see the results for yourself. Now, that list includes engines as well as Graphics libraries but I think it 
+illustrates the point; picking a library isn't a trivial task.
 
-I finally chose `Allegro <https://www.allegro.cc/>`_. I'll try out other libraries as well, but I went with Allegro because:
+I finally chose `Allegro <https://www.allegro.cc/>`_. I'll try out other libraries as well, but I went with Allegro 
+because:
 
  - It's got a good NUGet integration with Visual C++:  > `look here <https://wiki.allegro.cc/index.php?title=Windows,_Visual_Studio_2015_and_Nuget_Allegro_5>`_ <<
  - I'm not looking for 3D or complex drawing facilities.
  - I've used it way, way, way back, so there's a bit of familiarity with it.
 
-I don't have stong opinions on Allegro just yet. I've used other wrappers in the past and
-they all have their strengths and weaknesses. So be adventurous and try a few other libraries
-on your own!
+I don't have stong opinions on Allegro just yet. I've used other wrappers in the past and they all have their strengths
+and weaknesses. So be adventurous and try a few other libraries on your own!
 
-*NB*: I may give `tinyrender <https://github.com/ssloy/tinyrenderer>`_ a try, as it 
-illustrates mixing in source files from an external project later.
+*NB*: I may give `tinyrender <https://github.com/ssloy/tinyrenderer>`_ a try, as it illustrates mixing in source files 
+from an external project later.
 
 Allegro setup
 =========================================================
-I've already added to this project the Allegro NUGet package. I had to modify the `vcproj`
-by hand, but that was a trivial thing to do (mostly to get the NUGet package folder correct).
+I've already added to this project the Allegro NUGet package. I had to modify the ``vcproj`` by hand, but that was a 
+trivial thing to do (mostly to get the NUGet package folder correct).
 
-I'm not going to go into detail as to how I set it up - that's covered in the earlier link
-to Allegro. That and depending on your OS, you'll have different requirements. But feel free
-to use this project as a point of reference if you're going the Visual C++ route.
+I'm not going to go into detail as to how I set it up - that's covered in the earlier link to Allegro. That and 
+depending on your OS, you'll have different requirements. But feel free to use this project as a point of reference if 
+you're going the Visual C++ route.
 
-One thing I do want to point out is that I am linking the libraries against a single, monolithic
-``static library``. So what are the options here, and what do they mean.
+One thing I do want to point out is that I am linking the libraries against a single, monolithic ``static library``. 
+So what are the options here, and what do they mean.
 
 Simply put, our options are:
 
@@ -58,19 +56,19 @@ Simply put, our options are:
  - DLL
  - Multithreaded DLL
 
-What are these? What do they mean. I don't want to assume you all know the difference, so I'll
-take a minute to explain (and for more information, you can research further on your own).
+What are these? What do they mean. I don't want to assume you all know the difference, so I'll take a minute to explain 
+(and for more information, you can research further on your own).
 
 Static Library
----------------------------------------------------------
-In our previous examples, specifically in Review 2, we were linking against a static library. What
-this means is that the functions/classes that live in a library are copied from the library and
-embedded directly into the final executable. That `printf` function that we used? Remember, that's
-not part of the C++ language, it's a library function that lives in the "C Run-Time" (CRT) library. 
-Different compilers. For the Microsft compiler, that's the "libcmt*.lib" and "msvcrt*.lib".
+-----------------------------------------------------------------------------------------------------------------------
+In our previous examples, specifically in Review 2, we were linking against a static library. What this means is that 
+the functions/classes that live in a library are copied from the library and embedded directly into the final 
+executable. That `printf` function that we used? Remember, that's not part of the C++ language, it's a library function 
+that lives in the "C Run-Time" (CRT) library. Different compilers. For the Microsft compiler, that's the "libcmt*.lib" 
+and "msvcrt*.lib".
 
-From the Microsoft reference site `for libraries here <https://msdn.microsoft.com/en-us/library/abx4dbyh.aspx>`_
-we have the following:
+From the Microsoft reference site `for libraries here <https://msdn.microsoft.com/en-us/library/abx4dbyh.aspx>`_ we 
+have the following:
 
 +--------------+---------------------------------------------------------+--------+-------------------------+
 | Library      | Characteristics                                         | Option | Preprocessor directives |
@@ -93,36 +91,35 @@ I've thinned out this table as we don't want to talk about managed languages yet
 ``libcmt.lib`` and ``libcmtd.lib`` take the machine code, stored in the respective ``.lib`` file and embeds
 that into your executable. It's that simple.
 
-``msvcrt.lib`` and ``msvcrtd.lib`` inject a ... reference, for want of a better term, into your
-executable that looks into a DLL (`MSVCP*.dll`) for the function to call.
+``msvcrt.lib`` and ``msvcrtd.lib`` inject a ... reference, for want of a better term, into your executable that looks 
+into a DLL (`MSVCP*.dll`) for the function to call.
 
-So, why DLLs? Simply put, it allows the author of the library to change the function (to fix issues) or
-to share the function across multiple applications. Think about it this way - every application
-that uses `printf` as a static library has to embed that function into their executable, bloating
-the size of the executable. You have hundreds (if not thousands) of executables on your machine,
-each embedding the same functions into the execuatble and you've got and incredible amount of duplication
-of a single function across executables. Putting common functions into a DLL avoids that. It also means that 
-if your function has issues, all you have to do is replace the DLL to get a new version of that function.
+So, why DLLs? Simply put, it allows the author of the library to change the function (to fix issues) or to share the 
+function across multiple applications. Think about it this way - every application that uses `printf` as a static 
+library has to embed that function into their executable, bloating the size of the executable. You have hundreds (if 
+not thousands) of executables on your machine, each embedding the same functions into the execuatble and you've got 
+and incredible amount of duplication of a single function across executables. Putting common functions into a DLL 
+avoids that. It also means that if your function has issues, all you have to do is replace the DLL to get a new 
+version of that function.
 
-But that also runs us into other problems. You've no doubt heard the term on windows for 'DLL Hell'.
-You might not have a great definition for this - so let me lay out an example for you.
+But that also runs us into other problems. You've no doubt heard the term on windows for 'DLL Hell'. You might not 
+have a great definition for this - so let me lay out an example for you.
 
-Say you have a vendor that provides application A that installs a set of DLLs. Later, the same vendor
-might distribute another application, B, that also installs a new set of DLLs, but they haven't
-updated application A to use the new DLLs. And a shared function in those DLLs has been updated. It
-is now completely possible that change has broken application A. So you uninstall application A, which 
-removed the DLL shared with application B and now application B fails to work. And the cycle continues
-if you reinstall application A ...
+Say you have a vendor that provides application A that installs a set of DLLs. Later, the same vendor might 
+distribute another application, B, that also installs a new set of DLLs, but they haven't updated application A to use 
+the new DLLs. And a shared function in those DLLs has been updated. It is now completely possible that change has 
+broken application A. So you uninstall application A, which removed the DLL shared with application B and now 
+application B fails to work. And the cycle continues if you reinstall application A ...
 
-It's not as bad as that, because you can resolve a number of those issues by versioning your DLL, but that
-comes with its own set of problems.  Anyway, the long and the short of it is, for these Reviews, where possible
-I will be statically linking the executables.
+It's not as bad as that, because you can resolve a number of those issues by versioning your DLL, but that comes with 
+its own set of problems.  Anyway, the long and the short of it is, for these Reviews, where possible I will be 
+statically linking the executables.
 
 The C/C++ Language - Essentials
-===================================================================
-In the first few reviews, I glossed over a lot of the C++ syntax to focus more on the structure of the 
-build process. I'll fall back here a bit now and do a very high-level review of the more C like aspects of C++;
-looking at core language syntax, data types, functions, conditionals and loops.
+=======================================================================================================================
+In the first few reviews, I glossed over a lot of the C++ syntax to focus more on the structure of the build process. 
+I'll fall back here a bit now and do a very high-level review of the more C like aspects of C++; looking at core 
+language syntax, data types, functions, conditionals and loops.
 
 But first, the code!
 
@@ -202,17 +199,16 @@ And, as an output, we get the following:
 .. image:: Images/Review03/Review03.gif
 
 C++ Comments
---------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
 Not going to say a lot about comments. There are two types:
 
  - `//`: Begins a comment which continues until the end of the line. Can be put anywhere in the line.
  - `/* */`: Begins a comment block that starts with the `/*` and ends with the `*/`. Can start or end anywhere.
 
-### Preprocessor Macros
-
-When you start with the `#` symbol, you are beginning a 'Preprocessor Directive'. Each directive
-occupies one line (and can be extended across multiple lines using the `\` continuation character)
-and has the following format:
+Preprocessor Macros
+-----------------------------------------------------------------------------------------------------------------------
+When you start with the `#` symbol, you are beginning a 'Preprocessor Directive'. Each directive occupies one line (and 
+can be extended across multiple lines using the `\` continuation character) and has the following format:
 - after the `#` symbol, you can invoke one of the following commands
 
     - define
@@ -230,12 +226,12 @@ and has the following format:
 
 - you can then add any arguments, based on the aforementioned instruction.
 
-What we are currently doing with the preprocessor is including a header file in lines 4-8 of
-the example program. These bring in the function signatures as well as other elements defined
-in the header files. Feel free to peruse the files to see what jumps out at you.
+What we are currently doing with the preprocessor is including a header file in lines 4-8 of the example program. These 
+bring in the function signatures as well as other elements defined in the header files. Feel free to peruse the files 
+to see what jumps out at you.
 
-Later, we'll discuss more about preprocessor macros. But for now, it's enough to understand that
-there is more to the preprocessor than just includes.
+Later, we'll discuss more about preprocessor macros. But for now, it's enough to understand that there is more to the 
+preprocessor than just includes.
 
 ### Constants
 
@@ -243,8 +239,8 @@ The next line:
 
 ``const int maxiterations = 50;``
 
-defines a variable of type `int` (integer value) that is constant - it can be set once and
-cannot be changed after the fact.
+defines a variable of type `int` (integer value) that is constant - it can be set once and cannot be changed after the 
+fact.
 
 We'll also dig into the `const` keyword later as it has multiple uses.
 
@@ -254,9 +250,9 @@ Next, we see this:
 
 ``void DrawFrame(int width, int height);``
 
-This tells the compiler that we have a function called `DrawFrame` the has no return (thus the `void`
-in front of the function) and takes two arguments (an integer `width` and `height`). Note that this is
-exactly what you would put into a header file.
+This tells the compiler that we have a function called `DrawFrame` the has no return (thus the `void` in front of the 
+function) and takes two arguments (an integer `width` and `height`). Note that this is exactly what you would put into 
+a header file.
 
 ### The Entry Point Into Our Application
 
@@ -264,8 +260,8 @@ In C/C++ we define the entry point to our application as:
 
 ``int main(int argc, char* argv[])``
 
-Actually, that's a bit of a lie. For a 'console' application, we define the entry point as above.
-You can also define the entry point into your application like so:
+Actually, that's a bit of a lie. For a 'console' application, we define the entry point as above. You can also define 
+the entry point into your application like so:
 
 ``int main()``
 
@@ -274,13 +270,12 @@ or
 ``void main()``
 
 
-``int main()`` requires you to return an 'error code' back to the Operating System. A return
-value of ``0`` indicates no error in program execution. Anything else is an error. These 'error results'
-can be processed by batch files (or shell scripts) to control batch processing flow. But that
-discussion is outside of the scope of this article.
+``int main()`` requires you to return an 'error code' back to the Operating System. A return value of ``0`` indicates 
+no error in program execution. Anything else is an error. These 'error results' can be processed by batch files (or 
+shell scripts) to control batch processing flow. But that discussion is outside of the scope of this article.
 
-``void main()`` requires no return value. The OS assumes that the program has other means of
-determining or logging error conditions.
+``void main()`` requires no return value. The OS assumes that the program has other means of determining or logging 
+error conditions.
 
 However, back to the original definition: 
 
@@ -323,8 +318,7 @@ You can access each element in the command line like so:
 | `argv[4]`     | *an error*    |
 +---------------+---------------+
 
-We'll go into character strings later. For now, understand that the `char` C/C++ data type
-maps to a single byte.
+We'll go into character strings later. For now, understand that the `char` C/C++ data type maps to a single byte.
 
 Calling Functions
 ------------------------------------------------------------
@@ -337,8 +331,8 @@ Like ``printf``, calling a function is pretty straightforward:
     al_init_image_addon();
     al_init_primitives_addon();
 
-Each of those lines represents a call to an Allegro function. Each of those functions are defined
-in a header file. They should map to:
+Each of those lines represents a call to an Allegro function. Each of those functions are defined in a header file. 
+They should map to:
 
 +--------------------------+----------------------+
 | Function Name            | Header File          |
@@ -360,11 +354,10 @@ Nothing fancy about the following - we're just declaring variables:
     ALLEGRO_FONT* font = al_create_builtin_font();
     ALLEGRO_EVENT_QUEUE* eventQueue = nullptr;
 
-OK, one thing that may be a bit odd, if you're coming from an older version of C++, we
-have a ``nullptr`` keyword. This was added into the language spec back in C++ 11. This is
-a 'pointer literal'. When we dig into pointers later, we'll go over it more, but understand
-that ``nullptr`` is much more useful to us that ``null`` was. So if your compiler supports it,
-use it.
+OK, one thing that may be a bit odd, if you're coming from an older version of C++, we have a ``nullptr`` keyword. This
+was added into the language spec back in C++ 11. This is a 'pointer literal'. When we dig into pointers later, we'll go
+over it more, but understand that ``nullptr`` is much more useful to us that ``null`` was. So if your compiler supports
+it, use it.
 
 What kinds of variables do we have availble to us in C/C++? There actually aren't that many:
 
@@ -427,7 +420,9 @@ We can enhance the base types even further using additional keywords:
 |                  | ``nullptr``                  | *            | nullptr is the same size as a pointer. This can vary.                                                    |
 +------------------+------------------------------+--------------+----------------------------------------------------------------------------------------------------------+
 
-We are not limited to just these data types. We can create our own 'types' via structures and classes. However, they must be composed, at a bare minimum, of these types.
+We are not limited to just these data types. We can create our own 'types' via structures and classes. However, they 
+must be composed, at a bare minimum, of these types.
+
 I'll leave it to the reader to understand the min/max values that can be stored in each numerical data type.
 
 Loops and Conditionals
@@ -613,17 +608,17 @@ In the code, the only thing I'll point out is:
             break;
         }
 
-In the above, the conditional ``if (get_event && (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE))`` has a ``&&`` in it.
-that is the boolean ``AND`` operator. The Boolean ``OR`` operator is defined as ``||``.
+In the above, the conditional ``if (get_event && (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE))`` has a ``&&`` in it. 
+That is the boolean ``AND`` operator. The Boolean ``OR`` operator is defined as ``||``.
 
-Please note that there is a difference between ``&&`` and ``&`` as well as ``||`` and ``|``. The first,
-as pointed out earlier defines a boolean ``AND``/``OR`` operation. The latter defines a *bitwise* 
-``AND``/``OR`` operation. If you don't know what a bitwise operation is, we need to talk.
+Please note that there is a difference between ``&&`` and ``&`` as well as ``||`` and ``|``. The first, as pointed out
+earlier defines a boolean ``AND``/``OR`` operation. The latter defines a *bitwise* ``AND``/``OR`` operation. If you 
+don't know what a bitwise operation is, we need to talk.
 
 To Summarize
-==============================================================
-That's one fully functional C/C++ bit of code. We've looked at the language from a fairly simple
-starting point with this bit of code. In the next Review, we'll look at classes to round out the
-simple language review. We'll also talk about different build types and what they're used for.
+=======================================================================================================================
+That's one fully functional C/C++ bit of code. We've looked at the language from a fairly simple starting point with 
+this bit of code. In the next Review, we'll look at classes to round out the simple language review. We'll also talk 
+about different build types and what they're used for.
 
 With that, I'm out.
