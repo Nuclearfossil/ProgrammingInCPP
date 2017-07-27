@@ -346,8 +346,75 @@ Don't beleve me? Go and add
 
 into any of the existing code we've built in Visual C++. I'll wait.
 
-Yeah, there must be a compiler option for that in VC++.  I'll dig into it in a bit. 
+So, it takes a bit of jigging to get it to work correctly. I'll build a review at some point in time to talk about it.
+However, we end up with this for the assembly (in Debug) for the template:
 
-But this illustrates another issue - don't assume all compilers handle templates the same way.  I now want to see what
+.. code-block:: assembly
+
+    --- d:\dev\bagofholding\programmingincpp\templates01\main.cpp ------------------
+    // Example program
+    #include <iostream>
+    #include <string>
+
+    template<typename T>
+    T Min(T valueA, T valueB)
+    {
+    00007FF6566622B0  mov         dword ptr [rsp+10h],edx  
+    00007FF6566622B4  mov         dword ptr [rsp+8],ecx  
+    00007FF6566622B8  push        rbp  
+    00007FF6566622B9  push        rdi  
+    00007FF6566622BA  sub         rsp,0D8h  
+    00007FF6566622C1  mov         rbp,rsp  
+    00007FF6566622C4  mov         rdi,rsp  
+    00007FF6566622C7  mov         ecx,36h  
+    00007FF6566622CC  mov         eax,0CCCCCCCCh  
+    00007FF6566622D1  rep stos    dword ptr [rdi]  
+    00007FF6566622D3  mov         ecx,dword ptr [rsp+0F8h]  
+        return valueA < valueB ? valueA : valueB;
+    00007FF6566622DA  mov         eax,dword ptr [valueB]  
+    00007FF6566622E0  cmp         dword ptr [valueA],eax  
+    00007FF6566622E6  jge         Min<int>+46h (07FF6566622F6h)  
+    00007FF6566622E8  mov         eax,dword ptr [valueA]  
+    00007FF6566622EE  mov         dword ptr [rbp+0C0h],eax  
+    00007FF6566622F4  jmp         Min<int>+52h (07FF656662302h)  
+    00007FF6566622F6  mov         eax,dword ptr [valueB]  
+    00007FF6566622FC  mov         dword ptr [rbp+0C0h],eax  
+    00007FF656662302  mov         eax,dword ptr [rbp+0C0h]  
+    }
+
+And it's invoked like so:
+
+.. code-block:: assembly
+
+    int main()
+    {
+    00007FF656662B70  push        rbp  
+    00007FF656662B72  push        rdi  
+    00007FF656662B73  sub         rsp,0F8h  
+    00007FF656662B7A  lea         rbp,[rsp+20h]  
+    00007FF656662B7F  mov         rdi,rsp  
+    00007FF656662B82  mov         ecx,3Eh  
+    00007FF656662B87  mov         eax,0CCCCCCCCh  
+    00007FF656662B8C  rep stos    dword ptr [rdi]  
+        std::cout << "Min(8, 10): " << Min(10, 8) << std::endl;
+    00007FF656662B8E  mov         edx,8  
+    00007FF656662B93  mov         ecx,0Ah  
+    00007FF656662B98  call        Min<int> (07FF656661055h)  
+    00007FF656662B9D  mov         dword ptr [rbp+0C0h],eax  
+    00007FF656662BA3  lea         rdx,[string "Min(8, 10): " (07FF65666AD98h)]  
+    00007FF656662BAA  mov         rcx,qword ptr [__imp_std::cout (07FF656671150h)]  
+    00007FF656662BB1  call        std::operator<<<std::char_traits<char> > (07FF65666113Bh)  
+    00007FF656662BB6  mov         ecx,dword ptr [rbp+0C0h]  
+        std::cout << "Min(8, 10): " << Min(10, 8) << std::endl;
+    00007FF656662BBC  mov         edx,ecx  
+    00007FF656662BBE  mov         rcx,rax  
+    00007FF656662BC1  call        qword ptr [__imp_std::basic_ostream<char,std::char_traits<char> >::operator<< (07FF656671178h)]  
+    00007FF656662BC7  lea         rdx,[std::endl<char,std::char_traits<char> > (07FF6566610B9h)]  
+    00007FF656662BCE  mov         rcx,rax  
+    00007FF656662BD1  call        qword ptr [__imp_std::basic_ostream<char,std::char_traits<char> >::operator<< (07FF656671180h)]  
+
+You can find the source for this in the ``Templates01.vcxproj`` project.
+
+This illustrates another issue - don't assume all compilers handle templates the same way.  I now want to see what
 this is going to look like compiled with the Microsoft tools.  Let's do that.
 
