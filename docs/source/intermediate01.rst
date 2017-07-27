@@ -346,6 +346,9 @@ Don't beleve me? Go and add
 
 into any of the existing code we've built in Visual C++. I'll wait.
 
+This illustrates another issue - don't assume all compilers handle templates the same way.  I now want to see what
+this is going to look like compiled with the Microsoft tools.  Let's do that.
+
 So, it takes a bit of jigging to get it to work correctly. I'll build a review at some point in time to talk about it.
 However, we end up with this for the assembly (in Debug) for the template:
 
@@ -399,7 +402,7 @@ And it's invoked like so:
         std::cout << "Min(8, 10): " << Min(10, 8) << std::endl;
     00007FF656662B8E  mov         edx,8  
     00007FF656662B93  mov         ecx,0Ah  
-    00007FF656662B98  call        Min<int> (07FF656661055h)  
+    00007FF656662B98  call        Min<int> (07FF656661055h)  // <<== This is the address of the function to call (07FF656661055h)
     00007FF656662B9D  mov         dword ptr [rbp+0C0h],eax  
     00007FF656662BA3  lea         rdx,[string "Min(8, 10): " (07FF65666AD98h)]  
     00007FF656662BAA  mov         rcx,qword ptr [__imp_std::cout (07FF656671150h)]  
@@ -414,7 +417,3 @@ And it's invoked like so:
     00007FF656662BD1  call        qword ptr [__imp_std::basic_ostream<char,std::char_traits<char> >::operator<< (07FF656671180h)]  
 
 You can find the source for this in the ``Templates01.vcxproj`` project.
-
-This illustrates another issue - don't assume all compilers handle templates the same way.  I now want to see what
-this is going to look like compiled with the Microsoft tools.  Let's do that.
-
