@@ -24,9 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 - Pointers", "02 - Point
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointerIntro", "Pointers\PointerIntro\PointerIntro.vcxproj", "{679E13A8-8278-4DEF-948F-D379ED052758}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 - Templates", "03 - Templates", "{48F8BAA2-2F40-46DA-8287-F8EA27F9A11C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 - Intermediate", "03 - Intermediate", "{48F8BAA2-2F40-46DA-8287-F8EA27F9A11C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Templates01", "Templates01\Templates01.vcxproj", "{4312D19D-E325-4B71-A725-047925F7D623}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Templates01", "Intermediate\Templates01\Templates01.vcxproj", "{4312D19D-E325-4B71-A725-047925F7D623}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
