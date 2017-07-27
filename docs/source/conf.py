@@ -143,7 +143,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'ProgrammingInC.tex', u'ProgrammingInC++ Documentation',
+    (master_doc, 'ProgrammingInC.tex', u'Programming In C++ Documentation',
      u'Ash Matheson', 'manual'),
 ]
 
@@ -153,7 +153,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'programminginc', u'ProgrammingInC++ Documentation',
+    (master_doc, 'programminginc', u'Programming In C++ Documentation',
      [author], 1)
 ]
 
@@ -164,7 +164,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'ProgrammingInC', u'ProgrammingInC++ Documentation',
+    (master_doc, 'ProgrammingInC', u'Programming In C++ Documentation',
      author, 'ProgrammingInC', 'One line description of project.',
      'Miscellaneous'),
 ]

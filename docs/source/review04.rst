@@ -1,9 +1,9 @@
 Review 04 - Where we discuss structs, classes and other stuff
-***********************************************************************
+***********************************************************************************************************************
 Overview
-=======================================================================
-The source code this time around is going to be a little different. We're going to have multiple
-examples to go over. So this time, the `main.cpp` will work as a driver, executing optional `examples`.
+=======================================================================================================================
+The source code this time around is going to be a little different. We're going to have multiple examples to go over. 
+So this time, the `main.cpp` will work as a driver, executing optional `examples`.
 
 The code structure will look like this:
 
@@ -49,9 +49,9 @@ The ``main`` function itself will look like this:
         };
     }
 
-Change the value of ``toRun`` to try a different example.  Yes, I could drive this via the keyboard
-and a prompt, but you'll want to evaluate (and change) each of the examples. Changing a single int
-value will, in my option, be the faster way to iterate.
+Change the value of ``toRun`` to try a different example.  Yes, I could drive this via the keyboard and a prompt, but 
+you'll want to evaluate (and change) each of the examples. Changing a single int value will, in my option, be the 
+faster way to iterate.
 
 The ``struct`` keyword and our first example (example01.h/cpp)
 ==============================================================================
@@ -179,12 +179,11 @@ Here's a look at the code behind our first example:
         al_rest(5.0);
     };
 
-We have a bit more code this time around. What I've done here is enumerate the number of ways that
-we can use a ``struct`` (and ``typedef`` for that matter) to create our own new data type, variants
-of a 2D vector.
+We have a bit more code this time around. What I've done here is enumerate the number of ways that we can use a 
+``struct`` (and ``typedef`` for that matter) to create our own new data type, variants of a 2D vector.
 
-I'm fairly certain most of this will be common knowledge to most readers, so I'm not going to review
-every line of code here. However, this bit may be unfamiliar to new C++ coders:
+I'm fairly certain most of this will be common knowledge to most readers, so I'm not going to review every line of code
+here. However, this bit may be unfamiliar to new C++ coders:
 
 .. code-block:: C++
 
@@ -205,8 +204,8 @@ If you check out line 8 in ``main.cpp``, you'll see the definition of the ``gFon
 
 ``ALLEGRO_FONT* gFont = nullptr;``
 
-The ``extern`` keyword just says that the declaration of this variable is done outside this file,
-and it's up to the linker to resolve it. Nothing more than that.
+The ``extern`` keyword just says that the declaration of this variable is done outside this file, and it's up to the 
+linker to resolve it. Nothing more than that.
 
 But then we have that ``extern "C"`` ... that sure doesn't look like that's what's going on here.
 
@@ -221,14 +220,17 @@ But it kind of is. Here's what Microsoft has to say about the ``extern`` keyword
 The key takeaway from that is that is specifies the linkage conventions. From a little further 
 down in the docs `Microsoft Docs <https://docs.microsoft.com/en-us/cpp/cpp/using-extern-to-specify-linkage>`_
 
-    | In C++, when used with a string, extern specifies that the linkage conventions of another language are being used for the declarator(s). C functions and data can be accessed only if they are previously declared as having C linkage. However, they must be defined in a separately compiled translation unit.
+    | In C++, when used with a string, extern specifies that the linkage conventions of another language are being 
+      used for the declarator(s). C functions and data can be accessed only if they are previously declared as having C
+      linkage. However, they must be defined in a separately compiled translation unit.
     | 
-    | Microsoft C++ supports the strings "C" and "C++" in the string-literal field. All of the standard include files use the extern "C" syntax to allow the run-time library functions to be used in C++ programs.
+    | Microsoft C++ supports the strings "C" and "C++" in the string-literal field. All of the standard include files 
+      use the extern "C" syntax to allow the run-time library functions to be used in C++ programs.
 
-In short, this enforces the C linkage rules for anything encompassed in the the braces. This isn't
-a cheat to force code to be 'pure C', but it does help enfoce *some* rules (alllinker based rules).
-Read: This doesn't make the code compile in C - you're using a C++ compiler, it'll still compile it as
-C++. It just links it like it's C. Test this theory if you'd like by removing the ``typedef``.
+In short, this enforces the C linkage rules for anything encompassed in the the braces. This isn't a cheat to force 
+code to be 'pure C', but it does help enfoce *some* rules (alllinker based rules). Read: This doesn't make the code 
+compile in C - you're using a C++ compiler, it'll still compile it as C++. It just links it like it's C. Test this 
+theory if you'd like by removing the ``typedef``.
 
 Or, crack open the following link: `Compiler Explorer <https://godbolt.org/g/kC79EA>`_ to see the warnings.
 
@@ -239,9 +241,9 @@ When we run this bit of code, we get the following result:
 .. image:: Images/review04/example01.png
 
 Counting bytes and a knock to our sanity (example02.h/cpp)
-=============================================================================
-How much space does a struct take up? From our previous review (Review03), we had a table that illustrated
-how big each native data type would be. To help illustrate, let's take the following code:
+=======================================================================================================================
+How much space does a struct take up? From our previous review (Review03), we had a table that illustrated how big each 
+native data type would be. To help illustrate, let's take the following code:
 
 .. code-block:: C++
 
@@ -270,8 +272,8 @@ Here's the output:
     Size of a int:          4 byte(s)
     Size of a unsigned int: 4 byte(s)
 
-This is a great little table for us to use now. In `example02` I've done the same, so that we have a reference point
-to work back from.
+This is a great little table for us to use now. In `example02` I've done the same, so that we have a reference point to 
+work back from.
 
 .. code-block:: C++
 
@@ -406,10 +408,9 @@ It gets worse. Go ahead and inject the following into `VisibleVertex01`:
 
 What's going on? Is the ``sizeof`` funtion not working?
 
-I mean, that's not a lot of wasted space for an individual element, but it adds up quickly. Thus
-we really can't ignore it. In the last version of the `VisibleVertex01` struct, we see that we've
-wasted 8 bytes per `VisibleVertex01`. If we were to have a mesh with 65,000 unique instances of that
-type, that's 520,000 bytes.
+I mean, that's not a lot of wasted space for an individual element, but it adds up quickly. Thus we really can't ignore
+it. In the last version of the `VisibleVertex01` struct, we see that we've wasted 8 bytes per `VisibleVertex01`. If we 
+were to have a mesh with 65,000 unique instances of that type, that's 520,000 bytes.
 
 So, how can we fix that? Well, we can use the preprocessor like so:
 
@@ -466,22 +467,22 @@ Which results in:
     Size of a int:   04 byte(s)
     Size of a TestA: 08 byte(s)
 
-That *should* have been 5 bytes, no matter how you slice it. So, how does this work?
-What's happening here is that *something* in that structure is adding padding. *Why* is it doing
-that and *where* is it doing it are the questions we need to answer.
+That *should* have been 5 bytes, no matter how you slice it. So, how does this work? What's happening here is that 
+*something* in that structure is adding padding. *Why* is it doing that and *where* is it doing it are the questions 
+we need to answer.
 
-Fundamentally, when dealing with memory, CPUs access memory in *word* sized chunks. I purposely didn't
-explicitly say how big a word is, because that actually varies on architecture. For our purposes, this
-will be either 4 byte or 8 byte alignment (4 for 32 bit systems, 8 for 64 bit systems).
+Fundamentally, when dealing with memory, CPUs access memory in *word* sized chunks. I purposely didn't explicitly say 
+how big a word is, because that actually varies on architecture. For our purposes, this will be either 4 byte or 8 
+byte alignment (4 for 32 bit systems, 8 for 64 bit systems).
 
-For now, let's assume a 4 byte alignment (makes the math easier to work with). In the `TestA` struct we
-have the first field `a` starting at byte 0. This is A-OK (0 is always a good starting point). And it is a byte
-long. So we can assume that the next field `b` starts on the second byte, right?
+For now, let's assume a 4 byte alignment (makes the math easier to work with). In the `TestA` struct we have the first 
+field `a` starting at byte 0. This is A-OK (0 is always a good starting point). And it is a byte long. So we can 
+assume that the next field `b` starts on the second byte, right?
 
 Nope!
 
-Remember, the CPU is reading in the value from the *word* aligned boundary. In this case, 4 bytes. So there
-is padding added into the struct between fields ``a`` and ``b`` of 3 bytes. In essence, the structure looks like this:
+Remember, the CPU is reading in the value from the *word* aligned boundary. In this case, 4 bytes. So there is padding 
+added into the struct between fields ``a`` and ``b`` of 3 bytes. In essence, the structure looks like this:
 
 .. code-block:: C++
 
@@ -648,7 +649,9 @@ type alignment requirements.
 
 For completeness, here's the C++ shell version of the `TestA`/`TestB` structs using the ``#pragma pack(1)``: `reference link <cpp.sh/6tec>`_
 
-I've purposely avoided talking about pointers. I've done this on purpose as this throws a little more complexity into the mix.
+I've purposely avoided talking about pointers. I've done this on purpose as this throws a little more complexity into 
+the mix.
+
 I will be talking about them at a later point, but for now, I'd like to move on to classes.
 
 Where we add functionality to our types (example03.h/cpp)
@@ -657,21 +660,24 @@ Object Oriented programming.
 
 I'm not goint to talk about Object Oriented programming.
 
-I mean, seriously, in 2017, I think there's enough material on the web to cover Inheritance, Encapsulation, Abstraction, interfaces ...
-that's not what I wanted to write this series about. What I want to talk about is the nitty-gritty of the C++ implementation of classes.
+I mean, seriously, in 2017, I think there's enough material on the web to cover Inheritance, Encapsulation, 
+Abstraction, interfaces ...
+that's not what I wanted to write this series about. What I want to talk about is the nitty-gritty of the C++ 
+implementation of classes.
 
 If you're looking for an introduction to Object Oriented Programming in C++, I'd recommend you start 
 `OOP Introduction here <https://www3.ntu.edu.sg/home/ehchua/programming/cpp/cp3_OOP.html>`_, 
 `Welcome to OOP here <http://www.learncpp.com/cpp-tutorial/81-welcome-to-object-oriented-programming/>`_ to start.
-As far as printed material, it's been so long since I've taught C++/OOP, I don't think I can recommend anything remotely good. I'm not sure how well Scott Meyers' series of books
-holds up these days, but they were decent reading back in '03. I do remember using "C++ How to Program" as a teaching resource back in the 90s, but I haven't looked at it in
-over a decade `How to Program C++ by Paul Deitel here <https://www.amazon.com/How-Program-7th-Paul-Deitel/dp/0136117260/ref=sr_1_2?s=books&ie=UTF8&qid=1500351972&sr=1-2>`_
+As far as printed material, it's been so long since I've taught C++/OOP, I don't think I can recommend anything 
+remotely good. I'm not sure how well Scott Meyers' series of books holds up these days, but they were decent 
+reading back in '03. I do remember using "C++ How to Program" as a teaching resource back in the 90s, but I haven't 
+looked at it in over a decade `How to Program C++ by Paul Deitel here <https://www.amazon.com/How-Program-7th-Paul-Deitel/dp/0136117260/ref=sr_1_2?s=books&ie=UTF8&qid=1500351972&sr=1-2>`_
 
-What I do want to talk about is the syntax of Classes. I think that tends to get lost in the shuffle of folks learning C++, so I don't mind burning
-a bit of time as part of the refresher.
+What I do want to talk about is the syntax of Classes. I think that tends to get lost in the shuffle of folks learning 
+C++, so I don't mind burning a bit of time as part of the refresher.
 
-But first, let's look at the ``struct`` keyword again. We know that it allows us to set up a collection of fields to layout
-a structure in memory. But what if we were had the ability to bind Functions as a field?
+But first, let's look at the ``struct`` keyword again. We know that it allows us to set up a collection of fields to 
+layout a structure in memory. But what if we were had the ability to bind Functions as a field?
 
 like so:
 
@@ -693,7 +699,8 @@ We've essentially merged fields with functions. Could that work? Go ahead and th
 
 It compiles!
 
-So, ... how do we use it? I mean, we have a new struct that has a function, but how do we go about *doing* something with it?
+So, ... how do we use it? I mean, we have a new struct that has a function, but how do we go about *doing* something 
+with it?
 
 Well, let's create a new variable of type `Vertex` called `point01`:
 
@@ -733,11 +740,11 @@ There's nothing left to learn about C++!
 That's total nonsense, I know. There's so much more to cover.
 
 The thing with the ``struct`` keyword is that everything we've done so far is of ``public`` scope. That's the default
-scope for anything defined in a struct. That's mostly for backwards compatability, as the original definition of 
-the struct keyword in C didn't have a concept of 'data/functional hiding'.
+scope for anything defined in a struct. That's mostly for backwards compatability, as the original definition of the 
+struct keyword in C didn't have a concept of 'data/functional hiding'.
 
-So, scoping in structs. Like I said before, the default scope for a ``struct`` is ``public``. There's also
-``private`` and ``protected``.
+So, scoping in structs. Like I said before, the default scope for a ``struct`` is ``public``. There's also ``private`` 
+and ``protected``.
 
 Both the ``private`` and ``protected`` keywords hide elements of your structure. So if you were to do the following:
 
@@ -810,8 +817,8 @@ However, we can access it from inside the ``Vertex`` class:
 
 Code `with another a private and protected example here <cpp.sh/3o5ty>`_
 
-What we've seen so far is that we're hiding ``private`` and ``protected`` behind the ``struct`` barrier.
-We can also use derivation of structs to build object hierarcies:
+What we've seen so far is that we're hiding ``private`` and ``protected`` behind the ``struct`` barrier. We can also 
+use derivation of structs to build object hierarcies:
 
 Creating a new struct called ``ColorVertex`` like so:
 
@@ -843,9 +850,8 @@ Creating a new struct called ``ColorVertex`` like so:
         int b;
     };
 
-Allows `ColorVertex` to access all `public` and `protected` members of `Vertex`, but it hides 
-everything that's `private`. Go ahead, try and access `mX` and the `buffer` members of `Vertex`
-through `ColorVertex`. `Sandbox is here <cpp.sh/6nmzf>`_
+Allows `ColorVertex` to access all `public` and `protected` members of ``Vertex`, but it hides  everything that's 
+``private``. Go ahead, try and access `mX` and the `buffer` members of ``Vertex`` through ``ColorVertex``. `Sandbox is here <cpp.sh/6nmzf>`_
 
 OK, so that's a very quick run-though of the `struct` usage as an object.
 
@@ -853,12 +859,11 @@ But we never use it.
 
 NEVER.
 
-OK, that's a lie. We tend to use ``structs`` when talking about POD (Plain Old Data) types. But
-when you want to define Classes, that's when you use the ``class`` keyword.
+OK, that's a lie. We tend to use ``structs`` when talking about POD (Plain Old Data) types. But when you want to define
+ Classes, that's when you use the ``class`` keyword.
 
-What's the difference between ``struct`` and ``class``? One thing, and one thing only - the default
-access level. For the `struct` keyword, the default access level is ``public``. For ``class`` it's
-``private``.
+What's the difference between ``struct`` and ``class``? One thing, and one thing only - the default access level. For 
+the `struct` keyword, the default access level is ``public``. For ``class`` it's ``private``.
 
  - For completeness, POD (Plain Old Data) means nothing more than a struct that contains nothing but data. 
    It can be compelex data, but it contains no 'logic'.
@@ -976,9 +981,8 @@ So, as an example:
 
 `link to the example is here <cpp.sh/8oubb>`_
 
-That is an incredibly convoluted example. I'll see if I can come up with a better one, but
-in all honesty, you tend *not* to use this pattern. I think in all my years of coding, I've
-run across it a handfull of times.
+That is an incredibly convoluted example. I'll see if I can come up with a better one, but in all honesty, you tend 
+*not* to use this pattern. I think in all my years of coding, I've run across it a handfull of times.
 
 Additional references
 ===================================================================

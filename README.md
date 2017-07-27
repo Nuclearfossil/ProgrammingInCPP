@@ -8,7 +8,7 @@ We understand that there is an existing level of programming expertise by the re
 This tutorial series attempts to broach the topic of "How do I write code in C++" as well as touch on other aspects of the development cycle like debugging,
 improving the build process, and so on.
 
-## Sylabus
+## Syllabus
 
 ### Review
 

@@ -23,9 +23,8 @@ The source code will either be made available in Visual Studio 2015 (or later). 
 IDE from Microsoft at `Visual Studio Community <https://www.visualstudio.com/downloads/>`_ as well as on other web 
 based compilers like `C++ Shell <http://cpp.sh/>`_ or the `Compiler Explorer <https://gcc.godbolt.org>`_
 
-Sylabus
+Syllabus
 -----------------------------------------------------------------------------------------------------------------------
-
 Review
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -39,6 +38,7 @@ Review
 
     - Different build types (Debug, Release, Release with Debug symbols).
 
+Memory
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Pointer definition
@@ -49,14 +49,14 @@ Review
 Intermediate C++
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Threading
-- Serialization
-- RTTI/Exceptions
 - Templates
+- Serialization
 - Lambdas
+- RTTI/Exceptions
 - New data types (auto)
-- More stuff as I find it.
+- Threading
 - Some Libraries
+- More stuff as I find it.
 
     - STL and STL-like libraries
     - Header only vs. Static Libs vs. DLLs
@@ -72,3 +72,4 @@ Intermediate C++
    review04
    review05
    pointers01
+   intermediate01

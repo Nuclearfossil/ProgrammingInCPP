@@ -41,7 +41,7 @@ Let's take a look at the 'boilerplate' code I have set up for a ``main.cpp`` fil
         }
     }
 
-I'm actually allocating memory in this code snippet. Where? Every time I allocate a variable. So ``toRun`` is
+I'm actually allocating memory in this code snippet. Where? Every time I allocate a variable. So ``toRun`` is 
 allocated, on the stack. It's done automatically for me byt the compiler.
 
 But you hear all the time about C/C++ and memory leaks. Am I leaking memory here? How do I fix it?
@@ -51,9 +51,9 @@ Well, we're not leaking anything because of two things:
  1. The allocation is happening on the stack
  2. C/C++ scoping rules
 
-When we allocate memory, we can allocate it from two places: the "stack" and the "heap". Every function that
-you call creates it's own 'stack' memory space where it stores variables local to that function. It also stores
-arguments passed in, and out of, the function during the invocation of said function.
+When we allocate memory, we can allocate it from two places: the "stack" and the "heap". Every function that you call 
+creates it's own 'stack' memory space where it stores variables local to that function. It also stores arguments passed 
+in, and out of, the function during the invocation of said function.
 
 We allocate memory from the heap via the ``malloc``, ``new`` functions (and their variants). Anything we allocate from 
 the heap, we eventually have to reclaim via ``free`` and ``delete``, otherwise we end up with a memory leak. More on
@@ -184,8 +184,8 @@ That error refers to:
         printf("%i\n", index);   // <<== error here
     }    
 
-The compiler can't find ``index`` because it is only scoped to the ``for`` loop - initializing the 
-variable ``index`` inside the ``for`` loop automatically enforces the scope.
+The compiler can't find ``index`` because it is only scoped to the ``for`` loop - initializing the variable ``index`` 
+inside the ``for`` loop automatically enforces the scope.
 
 A quick change fixes this:
 
@@ -202,9 +202,9 @@ A quick change fixes this:
         printf("%i\n", index);   // <<== error here
     }    
 
-But is that a change for the better? Depends on your needs. Initializing the ``index`` variable inside
-the ``for`` loop automatically enforces cleanup of that variable; you don't have to worry about accidentally
-reusing that variable. That's a good thing, IMO. You can now legally do the following:
+But is that a change for the better? Depends on your needs. Initializing the ``index`` variable inside the ``for`` loop 
+automatically enforces cleanup of that variable; you don't have to worry about accidentally reusing that variable. 
+That's a good thing, IMO. You can now legally do the following:
 
 .. code-block:: C++
 
@@ -289,9 +289,9 @@ The results are:
     innerScope: 20
     innerScope: 5
 
-Simply put, local scope overrides the parent scope.  Let's say you wanted to access the 'parent' scope of the variable ``innerScope``.
-We can use the "scope resoloution operator" to do that - it's the ``::`` operator. However, it is not applicable to the curly brace
-scoping cheat.  An example helps clarify this:
+Simply put, local scope overrides the parent scope.  Let's say you wanted to access the 'parent' scope of the variable 
+``innerScope``. We can use the "scope resoloution operator" to do that - it's the ``::`` operator. However, it is not 
+applicable to the curly brace scoping cheat.  An example helps clarify this:
 
 .. code-block:: C++
 
@@ -324,7 +324,8 @@ Results in the output:
 
 More Scoping
 =======================================================================================================================
-Let's say we have a class called ``Utility``. In it, we want to define some ... utility functions
+Let's say we have a class called ``Utility``. In it, we want to define some ... utility functions.
+
 Like the ability to test to see if a file exists.
 
 Like this:
@@ -367,15 +368,15 @@ And since we're running on a remote box, our result:
 Some points about what's going on here, as we've added a few things that you may not be familiar
 with.
 
- 1. The ``Utility`` class has one static function (classes tend to describe these as 'methods').
-    Because it's static, you don't have to initialize an instance of the class to use it.
- 2. However, in order to use it, we have to use the scope resolution operator, along the the class
-    name and the method name, to access it.
- 3. The method we define must be defined as static for it to be used in this 'global' manner (without
-    instantiating an instance of ``Utility``).
+ 1. The ``Utility`` class has one static function (classes tend to describe these as 'methods'). Because it's static, 
+    you don't have to initialize an instance of the class to use it.
+ 2. However, in order to use it, we have to use the scope resolution operator, along the the class name and the method 
+    name, to access it.
+ 3. The method we define must be defined as static for it to be used in this 'global' manner (without instantiating an 
+    instance of ``Utility``).
 
-That's all well and good, but is that the right way to do this? Maybe we want to have a ``Utility`` class that has a ``File`` class inside of it.
-Can we do that? Is that a thing we can do in C++?
+That's all well and good, but is that the right way to do this? Maybe we want to have a ``Utility`` class that has a 
+``File`` class inside of it. Can we do that? Is that a thing we can do in C++?
 
 Let's try it!
 
@@ -422,8 +423,8 @@ From `cppreference.com <http://en.cppreference.com/w/cpp/language/static>`_
 
     | Inside a class definition, the keyword static declares members that are not bound to class instances.
 
-Is this the best way to implement this? Well, let's give you another option, so you can make up your
-own mind. Let's re-write the class we just wrote using a ``namespace`` instead.
+Is this the best way to implement this? Well, let's give you another option, so you can make up your own mind. Let's 
+re-write the class we just wrote using a ``namespace`` instead.
 
 .. code-block:: C++
 
@@ -472,7 +473,8 @@ The difference between the two implementations?
 
 That's the difference. Well, there are other differences ...
 
- 1. The default visibility in a namespace is ``public``. ``classes`` would be ``private``, which is why we had the ``public:`` in the first definition.
+ 1. The default visibility in a namespace is ``public``. ``classes`` would be ``private``, which is why we had the 
+    ``public:`` in the first definition.
  2. ``namespace`` affords us another keyword, ``using``. This allows us to do the following:
 
 .. code-block:: C++
@@ -494,16 +496,16 @@ That's the difference. Well, there are other differences ...
 
 `C++ Shell link 001 <cpp.sh/43szr>`_
 
-And we get the same output. Why would this be a better solution? Well, for starters, if we had multiple
-calls to ``File::WhateverMethod``, it saves us some typing.  Is that a big deal?
+And we get the same output. Why would this be a better solution? Well, for starters, if we had multiple calls to 
+``File::WhateverMethod``, it saves us some typing.  Is that a big deal?
 
 Well ...
 
-If you've done any digging on the internet for C++ tutorials, you've probably seen a lot of tutorials using
-something akin to: ``cout << "Here is a string" << endl;``
+If you've done any digging on the internet for C++ tutorials, you've probably seen a lot of tutorials using something 
+akin to: ``cout << "Here is a string" << endl;``
 
-``cout`` and ``endl`` live in the Standard library and are in the namespace ``std``. Which means you'd need to
-actually do this: ``std::cout << "Here is a string" << std::endl;``
+``cout`` and ``endl`` live in the Standard library and are in the namespace ``std``. Which means you'd need to actually
+do this: ``std::cout << "Here is a string" << std::endl;``
 
 Like so:
 
@@ -545,27 +547,26 @@ This is a crazy oversimplification of the process I have in my head, but I think
 
 MEMORY!!!
 =======================================================================================================================
-That's been a fairly long setup to get to this point - a program that actually allocates memory. I've use C++ Shell
-a lot to help kickstart some simple concepts, but this next bit is going to use Allegro, so we will be referencing
-the ``Review05`` project.
+That's been a fairly long setup to get to this point - a program that actually allocates memory. I've use C++ Shell a 
+lot to help kickstart some simple concepts, but this next bit is going to use Allegro, so we will be referencing the 
+``Review05`` project.
 
 !!!WARNING!!! The following code is purely for educational purposes ONLY!
 -----------------------------------------------------------------------------------------------------------------------
-I can't stress this enough - the code you are about to see is only for educational purposes. If you were to
-write production code this way, you should be publicly reprimanded for it.
+I can't stress this enough - the code you are about to see is only for educational purposes. If you were to write 
+production code this way, you should be publicly reprimanded for it.
 
 Anyway ...
 
-I'm going to create a simple application that creates a random shape on-screen depending on where
-you click on the mouse. We won't have any idea how many elements we're going to create beforehand
-so we will be dynamically allocating them!  There will also be a lot of code to do this. But I'm
-going to err on the side of verbosity and clarity, rather than performance (read - it's going to
-be far from optimal).
+I'm going to create a simple application that creates a random shape on-screen depending on where you click on the 
+mouse. We won't have any idea how many elements we're going to create beforehand so we will be dynamically allocating 
+them!  There will also be a lot of code to do this. But I'm going to err on the side of verbosity and clarity, rather 
+than performance (read - it's going to be far from optimal).
 
 Design
 -----------------------------------------------------------------------------------------------------------------------
-I'll do a little bit of inheritance here to help illustrate some more OOP idioms. This means
-I'll end up with a set of classes that, in UML, looks like this:
+I'll do a little bit of inheritance here to help illustrate some more OOP idioms. This means I'll end up with a set of 
+classes that, in UML, looks like this:
 
 .. image:: Images/Review05/classdesign01.png
 
@@ -766,14 +767,13 @@ Compile that. And it works!
 
 But it's wrong. Very, very wrong.
 
-Note all the ``new`` keywords. That's memory allocations of the class ``Circle`` and ``Rectangle``.
-When you ``new`` a class, you get back a pointer to the newly allocated object on the heap. If
-you remember earlier, I also said that anything you allocate from the heap, you have to clean
-up. So right now, we're leaking 5 ``Circle`` and 5 ``Rectangle`` objects.
+Note all the ``new`` keywords. That's memory allocations of the class ``Circle`` and ``Rectangle``. When you ``new`` a 
+class, you get back a pointer to the newly allocated object on the heap. If you remember earlier, I also said that 
+anything you allocate from the heap, you have to clean up. So right now, we're leaking 5 ``Circle`` and 5 ``Rectangle`` 
+objects.
 
-How do we clean them up? We delete them, using the ``delete`` keyword. We end up with syntax that
-looks like this: ``delete shapes[0];``. And we've deleted the first object we allocated! But there
-are 9 more to go:
+How do we clean them up? We delete them, using the ``delete`` keyword. We end up with syntax that looks like this: 
+``delete shapes[0];``. And we've deleted the first object we allocated! But there are 9 more to go:
 
 .. code-block::   C++
 
@@ -800,11 +800,14 @@ are 9 more to go:
 
 And we now are no longer leaking memory!
 
-But that's pretty hokey to have to track and delete objects like that. What if we wanted to
-allocate an arbitrary number of shapes? That current strategy isn't going to work. So what
-do we do?  C++ comes with an ``operator delete[]`` `C++ new operator link <http://www.cplusplus.com/reference/new/operator%20delete[]/>`_
+But that's pretty hokey to have to track and delete objects like that. What if we wanted to allocate an arbitrary 
+number of shapes? That current strategy isn't going to work. So what do we do?  C++ comes with an ``operator delete[]`` 
+`C++ new operator link <http://www.cplusplus.com/reference/new/operator%20delete[]/>`_
 
-    | operator delete[] is a regular function that can be called explicitly just as any other function. But in C++, delete[] is an operator with a very specific behavior: An expression with the delete[] operator, first calls the appropriate destructors for each element in the array (if these are of a class type), and then calls an array deallocation function.
+    | operator delete[] is a regular function that can be called explicitly just as any other function. But in C++, 
+      delete[] is an operator with a very specific behavior: An expression with the delete[] operator, first calls the 
+      appropriate destructors for each element in the array (if these are of a class type), and then calls an array 
+      deallocation function.
 
 Well that sure sounds like an appropriate replacement now, doesn't it? Let's try it:
 
@@ -825,8 +828,8 @@ That compiles no problem. Let's run it!
 
 .. image:: Images/Review05/whoopsie.png
 
-``Expression: is_block_type_valid(header->_block_use)`` ... what in the world does that mean. You can go
-ahead and google that if you want to, but I don't think it'll give you back anything good.
+``Expression: is_block_type_valid(header->_block_use)`` ... what in the world does that mean. You can go ahead and 
+google that if you want to, but I don't think it'll give you back anything good.
 
 So what's going on. The definition from the cpluscplus website says that we're deleting the array!
 
@@ -842,7 +845,8 @@ OK, we're creating an array of pointers. And that's what we're trying to delete,
 
 But hang on a minute there, cowboy. Check out the definition of what ``delete[]`` actually does:
 
-    | An expression with the delete[] operator, first calls the appropriate destructors for each element in the array (if these are of a class type), *and then calls an array deallocation function*.
+    | An expression with the delete[] operator, first calls the appropriate destructors for each element in the array 
+      (if these are of a class type), *and then calls an array deallocation function*.
 
 But that's what we're doing there. We are deleting the array that we created there. Or are we?
 
@@ -859,11 +863,11 @@ Let me ask you a question. What's the difference between these two lines:
     Shape* shapes[10];
     int numbers[10];
 
-One of those lines creates an array of ``Shape`` pointers. The other is an array of ``int``s. And where do these arrays live?
-If you're first response is "on the stack", they you win a no-prize! Arrays of this sort are allocated on the stack. You
-cannot deallocate (``delete``) from items created on the stack! And that's what we're seeing in the error. What we *have*
-allocated on the heap are the objects the slots in the ``shapes`` array are pointing to. So we *do* have to iterate over all
-the elements in the list to delete them. We *can* clean up the code to be a little less icky:
+One of those lines creates an array of ``Shape`` pointers. The other is an array of ``int``s. And where do these arrays 
+live? If you're first response is "on the stack", they you win a no-prize! Arrays of this sort are allocated on the 
+stack. You cannot deallocate (``delete``) from items created on the stack! And that's what we're seeing in the error. 
+What we *have* allocated on the heap are the objects the slots in the ``shapes`` array are pointing to. So we *do* have 
+to iterate over all the elements in the list to delete them. We *can* clean up the code to be a little less icky:
 
 .. code-block::   C++
 
@@ -872,8 +876,8 @@ the elements in the list to delete them. We *can* clean up the code to be a litt
         delete shapes[index];
     }
 
-That solves the problem, but it still leaves us with "how do we use `delete[]`". Well, we actually have to create the array
-on the heap.
+That solves the problem, but it still leaves us with "how do we use `delete[]`". Well, we actually have to create the 
+array on the heap.
 
 .. code-block::   C++
 
@@ -924,22 +928,21 @@ Here's a handy little table to refer to what some common values are:
 
 `nobug.org's CRT Heap Table <http://www.nobugs.org/developer/win32/debug_crt_heap.html#table>`_
 
-That's cool, but that's not the whole story.  We're currently running in Debug. What happens when we run in
-release?
+That's cool, but that's not the whole story.  We're currently running in Debug. What happens when we run in release?
 
 .. image:: Images/Review05/DevStudio04.png
 
 Ahh, it's all zeros.  That's good.  Or is it?
 
-New isn't supposed to 'clear' memory - it should just be grabbing a block of memory that isn't in use and
-blocking it off. So I would expect random data in that.
+New isn't supposed to 'clear' memory - it should just be grabbing a block of memory that isn't in use and blocking it 
+off. So I would expect random data in that.
 
 Let's try something simple,
 
 .. image:: Images/Review05/DevStudio05.png
 
-So to test our theory, we're allocating a single ``int`` on the heap. Taking a look at the memory block, we get
-the result we expect (that is, an uninitialized block of memory).
+So to test our theory, we're allocating a single ``int`` on the heap. Taking a look at the memory block, we get the 
+result we expect (that is, an uninitialized block of memory).
 
 This is getting frustrating, isn't it?
 
@@ -1031,7 +1034,8 @@ normal behaviour that makes sense to me.
 I'm still not sure, but I have some guesses.
 
  1. Allegro has, for some reason, overridden the operator new. This is a highly, highly suspect assumption.
- 2. It is very possible that I'm "Just getting (un)lucky". ``new`` is returning me block of memory that are already nulled.
+ 2. It is very possible that I'm "Just getting (un)lucky". ``new`` is returning me block of memory that are already 
+    nulled.
 
 Both situations are possible. I'm starting to lean toward #2, myself.  Mostly because of being able to do ``placement new``
 and this bit of code:
@@ -1043,11 +1047,11 @@ I use ``malloc`` to allocate 1000 bytes and stuff it into ``buffer``. Then, usin
 
 ``Shape** shapes = new (buffer) Shape*[10];``
 
-I can pull from that block. And from the image you can see that it's random data (also, the address of ``buffer`` and ``shapes`` is the same,
-but it's not shown in the slide).
+I can pull from that block. And from the image you can see that it's random data (also, the address of ``buffer`` and 
+``shapes`` is the same, but it's not shown in the slide).
 
 Holy crap, that was a long, long review. And I really want to go into more details. But I think that's enough for now.
 
-That was quite the review. And it's debatable that I've covered everything that would be considered 'a review'. But I feel
-that's enough 'basics' to cover for now. It's very possible I'll come back and add/revise this in the future,
-but as a starting point I consider the review over.
+That was quite the review. And it's debatable that I've covered everything that would be considered 'a review'. But I 
+feel that's enough 'basics' to cover for now. It's very possible I'll come back and add/revise this in the future, but 
+as a starting point I consider the review over.
