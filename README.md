@@ -38,3 +38,9 @@ improving the build process, and so on.
 - Some Libraries
   - STL and STL-like libraries
   - Header only vs. Static Libs vs. DLLs
+
+# Revisions
+## Feb 16, 2018
+
+- Update to VS 2018
+- Starting on writing up the differences in C++ Standard versions (98, 11, 14)
